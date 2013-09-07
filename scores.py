@@ -5,10 +5,29 @@ import simplejson as json
 import MySQLdb
 
 import pprint
+import nltk
 
 class DatabasePopulater:
     def __init__(self, key):
         self.key = key
+
+    def create_tags(self, description):
+        text = nltk.word_tokenize(description)
+        #turns string output into a tuple in format (word, POS)
+        print "\n\nHELLO"
+        print description
+        print text
+        output_tuple = nltk.pos_tag("Hi my name is David")
+        print "BYEBYE\n"
+        find_nouns(self,output_tuple)   
+
+    def find_nouns(self,output_tuples):
+        for item in output_tuples:
+            if item(1) is 'NN':
+                print item(0)
+                #add keyword to the keyword list for the current course 
+                #add to keyword database (maps ints to keywords) 
+
 
     # Retrieves an endpoint on the Penn Course Review API
     def get_data(self, endpoint):
@@ -80,6 +99,7 @@ SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
 
                 #print sql
                 execute(sql, db)
+            self.create_tags(course['result']['description'])
 
         db.close()
 
