@@ -13,17 +13,40 @@ class DatabasePopulater:
         self.key = key
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
 
+    def determine_searched_course(self,entered_string):
+        count = 0
+        dept_code = ""
+        rest_of_string = ""
+        course_number = ""
+        while entered_string[count].isalpha():
+            dept_code = dept_code + entered_string[count]
+            count = count+1
+        while entered_string[count].isspace():
+            count = count+1
+        for i in range(count,len(entered_string)-1):
+            rest_of_string = course_number + entered_string[i]
+        #strip punctuation from remaining string to get course number
+        course_number = ''.join(ch for ch in rest_of_string if ch not in string.punctuation)
+
+        sql="""SELECT courses.*
+               FROM courseAdvisor_course courses, courseAdvisor_coursecodes cc
+               WHERE cc.code = '%s-%s'
+               AND cc.course_id = courses.id""" % (dept_code,course_number)
+        searched_course = self.executeQuery(sql)
+        print searched_course
+
+
     def executeQuery(self, sql):
         cursor = self.db.cursor()
         try:
             cursor.execute(sql)
             self.db.commit()
-            return True
+            return cursor.fetchall()
         except Exception as e:
             print "\n~~~~~~~~FAILED: " + sql
             print e
             self.db.rollback()
-            return False
+            return None
 
     def create_tags(self, description, course_id):
         # Strip punctuation
@@ -151,6 +174,7 @@ AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
 def main(key):
     dp = DatabasePopulater(key)
     dp.populate_database()
+    dp.determine_searched_course("ANTH 556")
 
 if __name__ == "__main__":
     if (len(sys.argv) < 2):
