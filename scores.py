@@ -44,6 +44,9 @@ class DatabasePopulater:
                 print e
                 db.rollback()
 
+        def escape(val):
+            return val.replace("'", "\\'")
+
         db = MySQLdb.connect("localhost", "root", "", "PennApps" )
 
         pp = pprint.PrettyPrinter(indent=4)
@@ -52,13 +55,12 @@ class DatabasePopulater:
             course = self.get_data("/courses/" + str(course_id))
             #pp.pprint(course)
 
-            #print json.dumps(course['result']['aliases']),
             # Insert a course into the courses table
             sql = """INSERT INTO courseAdvisor_course(id, courseCodes, title, description)
-VALUES (%s, '%s', '%s', \"%s\")""" % (course_id,
-                                     json.dumps(course['result']['aliases']),
-                                     course['result']['name'],
-                                     course['result']['description'])
+VALUES (%s, '%s', '%s', '%s')""" % (course_id,
+                                    escape(json.dumps(course['result']['aliases'])),
+                                    escape(course['result']['name']),
+                                    escape(course['result']['description']))
             execute(sql, db)
 
             aliases = course['result']['aliases']
