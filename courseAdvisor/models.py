@@ -23,6 +23,7 @@ class Course(models.Model):
 		symmetrical=False,
 		related_name='linkedCourse+',
 	)
+	preSearched=models.BooleanField()
 	def __unicode__(self):
 		return title
 
@@ -37,6 +38,6 @@ class Links(models.Model):
 	strength=models.IntegerField()
 
 class Courses_Keywords(models.Model):
-	course_id=models.ForeignKey('Course')
-	keyword_id=models.ForeignKey('Keyword')
+	course=models.ForeignKey('Course')
+	keyword=models.ForeignKey('Keyword')
 	number=models.IntegerField()
