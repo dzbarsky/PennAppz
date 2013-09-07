@@ -9,7 +9,7 @@ import nltk
 import string
 
 class Database:
-    def __init__(self, key):
+    def __init__(self, key=None):
         self.key = key
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
 
