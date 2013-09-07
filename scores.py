@@ -8,7 +8,7 @@ import pprint
 import nltk
 import string
 
-class DatabasePopulater:
+class Database:
     def __init__(self, key):
         self.key = key
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
@@ -172,9 +172,9 @@ AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
         self.db.close()
 
 def main(key):
-    dp = DatabasePopulater(key)
-    dp.populate_database()
-    dp.determine_searched_course("ANTH 556")
+    db = Database(key)
+    db.populate_database()
+    db.determine_searched_course("ANTH 556")
 
 if __name__ == "__main__":
     if (len(sys.argv) < 2):
