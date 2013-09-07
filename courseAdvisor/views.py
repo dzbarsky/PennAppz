@@ -7,7 +7,6 @@ from django.shortcuts import render
 from database import DatabaseManager
 from courseAdvisor.models import Course
 
-@csrf_exempt
 def course_search(request):
 	if not request.is_ajax():
 		print 'not ajax'
