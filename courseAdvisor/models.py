@@ -26,7 +26,7 @@ class Course(models.Model):
 	def __unicode__(self):
 		return title
 
-class CourseCodes:
+class CourseCodes(models.Model):
     code=models.CharField(max_length=10)
     course=models.ForeignKey('Course')
 

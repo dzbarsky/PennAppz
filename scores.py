@@ -47,8 +47,6 @@ VALUES ('%s')""" % item[0]
                 self.executeQuery(sql)
 
         for item in occurrences:
-            print item
-            print occurrences[item]
             # Add keyword to the keyword list for the current course
             sql="""INSERT INTO courseAdvisor_courses_keywords(course_id, number, keyword_id)
 SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
@@ -83,34 +81,70 @@ SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
             return val.replace("'", "\\'")
 
         pp = pprint.PrettyPrinter(indent=4)
+        #course = self.get_data("/instructors/1-JACK-TOPIOL")
+        #pp.pprint(course)
+        #course = self.get_data("/courses/" + str(self.get_courses()[0]))
+        #pp.pprint(course)
 
+        # Populate the course tables
         for course_id in self.get_courses():
             course = self.get_data("/courses/" + str(course_id))
             #pp.pprint(course)
 
             # Insert a course into the courses table
-            sql = """INSERT INTO courseAdvisor_course(id, courseCodes, title, description, preSearched)
-VALUES (%s, '%s', '%s', '%s', FALSE)""" % (course_id,
-                                           escape(json.dumps(course['result']['aliases'])),
-                                           escape(course['result']['name']),
-                                           escape(course['result']['description']))
+            sql = """
+INSERT INTO courseAdvisor_course(id, title, description, preSearched)
+VALUES (%s, '%s', '%s', FALSE)""" % (course_id,
+                                     escape(course['result']['name']),
+                                     escape(course['result']['description']))
             self.executeQuery(sql)
+
+            # Insert the course codes
+            for alias in course['result']['aliases']:
+                sql = """
+INSERT INTO courseAdvisor_coursecodes(code, course_id)
+VALUES ('%s', %s)""" % (alias, course_id)
+                self.executeQuery(sql)
 
             aliases = course['result']['aliases']
             for alias in aliases:
                 # Make sure all the departments exist in the database
                 dept = alias[0:alias.find('-')]
-                sql = """INSERT IGNORE INTO courseAdvisor_department(code)
+                sql = """
+INSERT IGNORE INTO courseAdvisor_department(code)
 VALUES ('%s')""" % dept
                 self.executeQuery(sql)
 
-                sql = """INSERT IGNORE INTO courseAdvisor_course_departments(course_id, department_id)
+                sql = """
+INSERT IGNORE INTO courseAdvisor_course_departments(course_id, department_id)
 SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
                                                                   dept)
 
-                #print sql
                 self.executeQuery(sql)
             self.create_tags(course['result']['description'], course_id)
+
+
+        # Populate the instructor tables.
+        for instructor in self.get_data("/instructors")['result']['values']:
+            instructor_data = self.get_data(instructor['path'])
+
+            # Add the instructor the instructor table.
+            sql = """
+INSERT INTO courseAdvisor_instructor(name)
+VALUES ('%s')""" % instructor_data['result']['name']
+            self.executeQuery(sql)
+
+            # Add the classes the instructor teaches to the pivot table.
+            for review in instructor_data['result']['reviews']['values']:
+                for alias in review['section']['aliases']:
+                    sql = """
+INSERT IGNORE INTO courseAdvisor_instructor_courses(instructor_id, course_id)
+SELECT instructor.id, coursecodes.course_id
+FROM courseAdvisor_instructor instructor, courseAdvisor_coursecodes coursecodes
+WHERE instructor.name = '%s'
+AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
+                                  alias[0 : len(alias) - 4])
+                    self.executeQuery(sql)
 
         self.db.close()
 
