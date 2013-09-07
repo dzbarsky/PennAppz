@@ -9,7 +9,7 @@ class Department(models.Model):
 
 class Course(models.Model):
 	courseCodes=models.CharField(max_length=1500,null=True)
-	title=models.CharField(max_length=60)
+	title=models.CharField(max_length=200)
 	description=models.CharField(max_length=1500,null=True)
 	keywords=models.ManyToManyField('Keyword')
 	departments=models.ManyToManyField('Department')
