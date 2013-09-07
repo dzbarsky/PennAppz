@@ -35,7 +35,6 @@ class DatabaseManager:
                WHERE cc.code = '%s-%s'
                AND cc.course_id = courses.id""" % (dept_code,course_number)
         searched_course = self.executeQuery(sql)
-        print searched_course
 
     def executeQuery(self, sql):
         cursor = self.db.cursor()
@@ -44,12 +43,14 @@ class DatabaseManager:
             self.db.commit()
             return cursor.fetchall()
         except Exception as e:
-            print "\n~~~~~~~~FAILED: " + sql
+            print "\n~~~~~~~~QUERY FAILED: " + sql
             print e
             self.db.rollback()
             return None
 
-    def create_tags(self, description, course_id):
+    def create_tags(self, description, title, course_id):
+        # Add keywords from the title to the description, weighing them by 3x.
+        description = description + " " + title + " " + title + " " + title
         # Strip punctuation
         text = ''.join(ch for ch in description if ch not in string.punctuation)
         text = nltk.word_tokenize(text)
@@ -105,15 +106,10 @@ SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
             return val.replace("'", "\\'")
 
         pp = pprint.PrettyPrinter(indent=4)
-        #course = self.get_data("/instructors/1-JACK-TOPIOL")
-        #pp.pprint(course)
-        #course = self.get_data("/courses/" + str(self.get_courses()[0]))
-        #pp.pprint(course)
 
         # Populate the course tables
         for course_id in self.get_courses():
             course = self.get_data("/courses/" + str(course_id))
-            #pp.pprint(course)
 
             # Insert a course into the courses table
             sql = """
@@ -145,8 +141,9 @@ SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
                                                                   dept)
 
                 self.executeQuery(sql)
-            self.create_tags(course['result']['description'], course_id)
-
+            self.create_tags(course['result']['description'],
+                             course['result']['title'],
+                             course_id)
 
         # Populate the instructor tables.
         if instructors:
