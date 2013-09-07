@@ -23,7 +23,7 @@ class Course(models.Model):
 		symmetrical=False,
 		related_name='linkedCourse+',
 	)
-	preSearched=models.BooleanField()
+	preSearched=models.BooleanField(null=True,default='False')
 	def __unicode__(self):
 		return title
 
