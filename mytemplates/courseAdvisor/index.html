@@ -19,19 +19,23 @@
     <link href='http://fonts.googleapis.com/css?family=Yeseva+One|Happy+Monkey|Quattrocento+Sans' rel='stylesheet' type='text/css'>
 
     <script>
-$(document).on('click','button',function() {
-  $.post('course_search/',{coursecode:'SARS 105'});
+function setup() {
+
+document.getElementById("submit").addEventListener("click", function() {
+  var search = document.getElementById("textbox").value;
+  $.post('course_search/',{coursecode: search});
 });
+}
     </script>
   </head>
   <!-- <body bgcolor='#B0E2FF'> -->
-  <body>
+  <body onload="setup()">
 
     <div id="header">nemo</div>
     <div id="main">
       <form id="searchbar"> search for a course you enjoyed:
         <input id="textbox" type="text" name="keyword" placeholder="enter course code">
-        <input type="submit" value="GO">
+        <input type="submit" value="GO" id="submit">
       </form>
       <div class="flipbox-container">
         <div class="response">
