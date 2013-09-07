@@ -17,9 +17,9 @@ class DatabaseManager:
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
 
     def determine_searched_course(self,entered_string):
-	matches = re.match(r'([a-zA-Z]{3,4})[-| ]?([0-9]{2,3})',entered_string);
+        matches = re.match(r'([a-zA-Z]{3,4})[-| ]?([0-9]{2,3})',entered_string);
         #strip punctuation from remaining string to get course number
-	course_number = matches.group(1) + '-' + matches.group(2)
+        course_number = matches.group(1) + '-' + matches.group(2)
 
         sql="""SELECT courses.*
                FROM courseAdvisor_course courses, courseAdvisor_coursecodes cc
@@ -134,7 +134,7 @@ SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
 
                 self.executeQuery(sql)
             self.create_tags(course['result']['description'],
-                             course['result']['title'],
+                             course['result']['name'],
                              course_id)
 
         self.db.close()
