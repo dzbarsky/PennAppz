@@ -33,24 +33,38 @@ class DatabasePopulater:
         return course_ids
 
     def populate_database(self):
-        db = MySQLdb.connect("localhost", "root", "", "PennApps" )
-        cursor = db.cursor()
 
-        #pp = pprint.PrettyPrinter(indent=4)
-
-        for course_id in self.get_courses():
-            course = self.get_data("/courses/" + str(course_id))
-            #pp.pprint(course)
-
-            # Prepare SQL query to INSERT a record into the database.
-            sql = """INSERT INTO COURSES(id, name)
-VALUES (%s, '%s')""" % (course_id, course['result']['name'])
+        def execute(sql, db):
+            cursor = db.cursor()
             try:
                 cursor.execute(sql)
                 db.commit()
             except Exception as e:
                 print e
                 db.rollback()
+
+        db = MySQLdb.connect("localhost", "root", "", "PennApps" )
+
+        pp = pprint.PrettyPrinter(indent=4)
+
+        for course_id in self.get_courses():
+            course = self.get_data("/courses/" + str(course_id))
+            pp.pprint(course)
+
+            # Insert a course into the courses table
+            sql = """INSERT INTO courseAdvisor_course(course_id, title, description)
+VALUES (%s, '%s', \"%s\")""" % (course_id,
+                              course['result']['name'],
+                              course['result']['description'])
+            execute(sql, db)
+
+            aliases = course['result']['aliases']
+            for alias in aliases:
+                dept = alias[0:alias.find('-')]
+                print dept
+                sql = """INSERT IGNORE INTO courseAdvisor_department(name)
+VALUES ('%s')""" % dept
+                execute(sql, db)
 
         db.close()
 
