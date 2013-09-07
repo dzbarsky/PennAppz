@@ -41,3 +41,8 @@ class Courses_Keywords(models.Model):
 	course=models.ForeignKey('Course')
 	keyword=models.ForeignKey('Keyword')
 	number=models.IntegerField()
+
+class Instructor(models.Model):
+    name=models.CharField(max_length=100)
+    courses=models.ManyToManyField('Course')
+
