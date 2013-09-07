@@ -35,7 +35,6 @@ class Database:
         searched_course = self.executeQuery(sql)
         print searched_course
 
-
     def executeQuery(self, sql):
         cursor = self.db.cursor()
         try:
