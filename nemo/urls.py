@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-from courseAdvisor import views
+from nemo import views
 
 urlpatterns = patterns('',
 

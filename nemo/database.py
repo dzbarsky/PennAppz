@@ -22,7 +22,7 @@ class DatabaseManager:
         course_number = matches.group(1) + '-' + matches.group(2)
 
         sql="""SELECT courses.*
-               FROM courseAdvisor_course courses, courseAdvisor_coursecodes cc
+               FROM nemo_course courses, nemo_coursecodes cc
                WHERE cc.code = '%s'
                AND cc.course_id = courses.id""" % (course_number)
         searched_course = self.executeQuery(sql)
@@ -59,14 +59,14 @@ class DatabaseManager:
                 occurrences[item[0]] = prev + 1
 
                 # Insert word into database
-                sql="""INSERT IGNORE INTO courseAdvisor_keyword(word)
+                sql="""INSERT IGNORE INTO nemo_keyword(word)
 VALUES ('%s')""" % item[0]
                 self.executeQuery(sql)
 
         for item in occurrences:
             # Add keyword to the keyword list for the current course
-            sql="""INSERT INTO courseAdvisor_courses_keywords(course_id, number, keyword_id)
-SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
+            sql="""INSERT INTO nemo_courses_keywords(course_id, number, keyword_id)
+SELECT %s, %s, id FROM nemo_keyword WHERE word='%s'""" % (course_id,
                                                                    occurrences[item],
                                                                    item)
             self.executeQuery(sql)
@@ -103,18 +103,45 @@ SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
         for course_id in self.get_courses():
             course = self.get_data("/courses/" + str(course_id))
 
+            # Compute the ratings for the course
+            reviews = self.get_data(course['result']['coursehistories']['path'] + "/reviews")['result']['values']
+            difficulty = 0
+            instructorQuality = 0
+            courseQuality = 0
+            numReviews = 0
+            for review in reviews:
+                if ('rDifficulty' in review['ratings'] and
+                    'rInstructorQuality' in review['ratings'] and
+                    'rCourseQuality' in review['ratings']):
+                    difficulty += float(review['ratings']['rDifficulty'])
+                    instructorQuality += float(review['ratings']['rInstructorQuality'])
+                    courseQuality += float(review['ratings']['rCourseQuality'])
+                    numReviews = numReviews + 1
+
+            if numReviews is not 0:
+                difficulty /= numReviews
+                courseQuality /= numReviews
+                instructorQuality /= numReviews
+            else:
+                difficulty = courseQuality = instructorQuality = -1
+
             # Insert a course into the courses table
             sql = """
-INSERT INTO courseAdvisor_course(id, title, description, preSearched)
-VALUES (%s, '%s', '%s', FALSE)""" % (course_id,
-                                     escape(course['result']['name']),
-                                     escape(course['result']['description']))
+INSERT INTO nemo_course(id, title, description, preSearched,
+difficulty, instructorQuality, courseQuality)
+VALUES (%s, '%s', '%s', FALSE, %s, %s, %s)""" % (course_id,
+                                                 escape(course['result']['name']),
+                                                 escape(course['result']['description']),
+                                                 difficulty,
+                                                 instructorQuality,
+                                                 courseQuality)
+
             self.executeQuery(sql)
 
             # Insert the course codes
             for alias in course['result']['aliases']:
                 sql = """
-INSERT INTO courseAdvisor_coursecodes(code, course_id)
+INSERT INTO nemo_coursecodes(code, course_id)
 VALUES ('%s', %s)""" % (alias, course_id)
                 self.executeQuery(sql)
 
@@ -123,13 +150,13 @@ VALUES ('%s', %s)""" % (alias, course_id)
                 # Make sure all the departments exist in the database
                 dept = alias[0:alias.find('-')]
                 sql = """
-INSERT IGNORE INTO courseAdvisor_department(code)
+INSERT IGNORE INTO nemo_department(code)
 VALUES ('%s')""" % dept
                 self.executeQuery(sql)
 
                 sql = """
-INSERT IGNORE INTO courseAdvisor_course_departments(course_id, department_id)
-SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
+INSERT IGNORE INTO nemo_course_departments(course_id, department_id)
+SELECT %s, id FROM nemo_department WHERE code='%s'""" % (course_id,
                                                                   dept)
 
                 self.executeQuery(sql)
@@ -148,7 +175,7 @@ SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
 
                 # Add the instructor the instructor table.
                 sql = """
-INSERT INTO courseAdvisor_instructor(name)
+INSERT INTO nemo_instructor(name)
 VALUES ('%s')""" % instructor_data['result']['name']
                 self.executeQuery(sql)
 
@@ -156,9 +183,9 @@ VALUES ('%s')""" % instructor_data['result']['name']
                 for review in instructor_data['result']['reviews']['values']:
                     for alias in review['section']['aliases']:
                         sql = """
-INSERT IGNORE INTO courseAdvisor_instructor_courses(instructor_id, course_id)
+INSERT IGNORE INTO nemo_instructor_courses(instructor_id, course_id)
 SELECT instructor.id, coursecodes.course_id
-FROM courseAdvisor_instructor instructor, courseAdvisor_coursecodes coursecodes
+FROM nemo_instructor instructor, nemo_coursecodes coursecodes
 WHERE instructor.name = '%s'
 AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
                                   alias[0 : len(alias) - 4])

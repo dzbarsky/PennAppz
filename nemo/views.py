@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from database import DatabaseManager
-from courseAdvisor.models import Course
+from nemo.models import Course
 
 def course_search(request):
 	if not request.is_ajax():
@@ -19,4 +19,4 @@ def course_search(request):
         return HttpResponse(jsonified)
 
 def index(request):
-	return render(request, 'courseAdvisor/index.html')
+	return render(request, 'nemo/index.html')
