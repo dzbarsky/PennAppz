@@ -4,7 +4,6 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 <script>
 $(document).on('click','button',function() {
-	var data= $('textarea').val();
-	$.post('course_search/',{coursecode:data});
+	$.post('course_search/',{coursecode:'SARS 105'});
 });
 </script>
