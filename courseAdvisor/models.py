@@ -8,7 +8,6 @@ class Department(models.Model):
 		return name
 
 class Course(models.Model):
-	courseCodes=models.CharField(max_length=1500,null=True)
 	title=models.CharField(max_length=200)
 	description=models.CharField(max_length=1500,null=True)
 	keywords=models.ManyToManyField(
@@ -27,6 +26,10 @@ class Course(models.Model):
 	def __unicode__(self):
 		return title
 
+class CourseCodes(models.Model):
+    code=models.CharField(max_length=10)
+    course=models.ForeignKey('Course')
+
 class Keyword(models.Model):
 	word=models.CharField(max_length=30,unique=True)
 	def __unicode__(self):
@@ -43,6 +46,6 @@ class Courses_Keywords(models.Model):
 	number=models.IntegerField()
 
 class Instructor(models.Model):
-    name=models.CharField(max_length=100)
+    name=models.CharField(max_length=100, unique=True)
     courses=models.ManyToManyField('Course')
 
