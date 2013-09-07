@@ -103,12 +103,38 @@ SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
         for course_id in self.get_courses():
             course = self.get_data("/courses/" + str(course_id))
 
+            # Compute the ratings for the course
+            reviews = self.get_data(course['result']['coursehistories']['path'] + "/reviews")['result']['values']
+            difficulty = 0
+            instructorQuality = 0
+            courseQuality = 0
+            numReviews = 0
+            for review in reviews:
+                pp.pprint(review['ratings'])
+                if ('rDifficulty' in review['ratings']):
+                    difficulty += float(review['ratings']['rDifficulty'])
+                instructorQuality += float(review['ratings']['rInstructorQuality'])
+                courseQuality += float(review['ratings']['rCourseQuality'])
+                numReviews = numReviews + 1
+
+            if numReviews is not 0:
+                difficulty /= numReviews
+                courseQuality /= numReviews
+                instructorQuality /= numReviews
+            else:
+                difficulty = courseQuality = instructorQuality = -1
+
             # Insert a course into the courses table
             sql = """
-INSERT INTO courseAdvisor_course(id, title, description, preSearched)
-VALUES (%s, '%s', '%s', FALSE)""" % (course_id,
-                                     escape(course['result']['name']),
-                                     escape(course['result']['description']))
+INSERT INTO courseAdvisor_course(id, title, description, preSearched,
+difficulty, instructorQuality, courseQuality)
+VALUES (%s, '%s', '%s', FALSE, %s, %s, %s)""" % (course_id,
+                                                 escape(course['result']['name']),
+                                                 escape(course['result']['description']),
+                                                 difficulty,
+                                                 instructorQuality,
+                                                 courseQuality)
+
             self.executeQuery(sql)
 
             # Insert the course codes

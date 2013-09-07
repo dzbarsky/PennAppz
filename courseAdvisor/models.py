@@ -3,28 +3,31 @@ from django.db import models
 # Create your models here.
 
 class Department(models.Model):
-	code=models.CharField(max_length=5,unique=True)
-	def __unicode__(self):
-		return name
+    code=models.CharField(max_length=5,unique=True)
+    def __unicode__(self):
+        return name
 
 class Course(models.Model):
-	title=models.CharField(max_length=200)
-	description=models.CharField(max_length=1500,null=True)
-	keywords=models.ManyToManyField(
-		'Keyword',
-		through='Courses_Keywords',
-		symmetrical=False,
-	)
-	departments=models.ManyToManyField('Department')
-	linkedCourses=models.ManyToManyField(
-		'self',
-		through='Links',
-		symmetrical=False,
-		related_name='linkedCourse+',
-	)
-	preSearched=models.BooleanField()
-	def __unicode__(self):
-		return title
+    title=models.CharField(max_length=200)
+    description=models.CharField(max_length=1500,null=True)
+    keywords=models.ManyToManyField(
+        'Keyword',
+        through='Courses_Keywords',
+        symmetrical=False,
+    )
+    departments=models.ManyToManyField('Department')
+    linkedCourses=models.ManyToManyField(
+        'self',
+        through='Links',
+        symmetrical=False,
+        related_name='linkedCourse+',
+    )
+    preSearched=models.BooleanField()
+    difficulty=models.DecimalField(max_digits=5, decimal_places=2)
+    courseQuality=models.DecimalField(max_digits=5, decimal_places=2)
+    instructorQuality=models.DecimalField(max_digits=5, decimal_places=2)
+    def __unicode__(self):
+        return title
 
 class CourseCodes(models.Model):
     code=models.CharField(max_length=10, unique=True)
