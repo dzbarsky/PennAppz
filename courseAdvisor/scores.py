@@ -7,6 +7,7 @@ import MySQLdb
 import pprint
 import nltk
 import string
+import re
 
 class Database:
     def __init__(self, key=None):
@@ -14,26 +15,16 @@ class Database:
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
 
     def determine_searched_course(self,entered_string):
-        count = 0
-        dept_code = ""
-        rest_of_string = ""
-        course_number = ""
-        while entered_string[count].isalpha():
-            dept_code = dept_code + entered_string[count]
-            count = count+1
-        while entered_string[count].isspace():
-            count = count+1
-        for i in range(count,len(entered_string)-1):
-            rest_of_string = course_number + entered_string[i]
+	matches = re.match(r'([a-zA-Z]{3,4})[-| ]?([0-9]{2,3})',entered_string);
         #strip punctuation from remaining string to get course number
-        course_number = ''.join(ch for ch in rest_of_string if ch not in string.punctuation)
+	course_number = matches.group(1) + '-' + matches.group(2)
 
         sql="""SELECT courses.*
                FROM courseAdvisor_course courses, courseAdvisor_coursecodes cc
-               WHERE cc.code = '%s-%s'
-               AND cc.course_id = courses.id""" % (dept_code,course_number)
+               WHERE cc.code = '%s'
+               AND cc.course_id = courses.id""" % (course_number)
         searched_course = self.executeQuery(sql)
-        print searched_course
+        return searched_course
 
     def executeQuery(self, sql):
         cursor = self.db.cursor()
@@ -146,7 +137,9 @@ SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
             self.create_tags(course['result']['description'], course_id)
 
 
+        self.db.close()
         # Populate the instructor tables.
+'''
         for instructor in self.get_data("/instructors")['result']['values']:
             instructor_data = self.get_data(instructor['path'])
 
@@ -167,13 +160,12 @@ WHERE instructor.name = '%s'
 AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
                                   alias[0 : len(alias) - 4])
                     self.executeQuery(sql)
+'''
 
-        self.db.close()
 
 def main(key):
     db = Database(key)
     db.populate_database()
-    db.determine_searched_course("ANTH 556")
 
 if __name__ == "__main__":
     if (len(sys.argv) < 2):
