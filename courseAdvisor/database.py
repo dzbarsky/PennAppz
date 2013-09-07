@@ -110,12 +110,13 @@ SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
             courseQuality = 0
             numReviews = 0
             for review in reviews:
-                pp.pprint(review['ratings'])
-                if ('rDifficulty' in review['ratings']):
+                if ('rDifficulty' in review['ratings'] and
+                    'rInstructorQuality' in review['ratings'] and
+                    'rCourseQuality' in review['ratings']):
                     difficulty += float(review['ratings']['rDifficulty'])
-                instructorQuality += float(review['ratings']['rInstructorQuality'])
-                courseQuality += float(review['ratings']['rCourseQuality'])
-                numReviews = numReviews + 1
+                    instructorQuality += float(review['ratings']['rInstructorQuality'])
+                    courseQuality += float(review['ratings']['rCourseQuality'])
+                    numReviews = numReviews + 1
 
             if numReviews is not 0:
                 difficulty /= numReviews
