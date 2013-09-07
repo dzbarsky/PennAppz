@@ -14,17 +14,13 @@ class DatabasePopulater:
     def create_tags(self, description):
         text = nltk.word_tokenize(description)
         #turns string output into a tuple in format (word, POS)
-        print "\n\nHELLO"
-        print description
-        print text
-        output_tuple = nltk.pos_tag("Hi my name is David")
-        print "BYEBYE\n"
-        find_nouns(self,output_tuple)   
+        output_tuple = nltk.pos_tag(text);
+        self.find_nouns(output_tuple)
 
     def find_nouns(self,output_tuples):
         for item in output_tuples:
-            if item(1) is 'NN':
-                print item(0)
+            if "NN" in item[1]:
+                print item[0]
                 #add keyword to the keyword list for the current course 
                 #add to keyword database (maps ints to keywords) 
 
