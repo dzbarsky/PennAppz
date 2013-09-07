@@ -40,6 +40,7 @@ class DatabasePopulater:
                 cursor.execute(sql)
                 db.commit()
             except Exception as e:
+                print "\n~~~~~~~~FAILED: " + sql
                 print e
                 db.rollback()
 
@@ -49,21 +50,30 @@ class DatabasePopulater:
 
         for course_id in self.get_courses():
             course = self.get_data("/courses/" + str(course_id))
-            pp.pprint(course)
+            #pp.pprint(course)
 
+            #print json.dumps(course['result']['aliases']),
             # Insert a course into the courses table
-            sql = """INSERT INTO courseAdvisor_course(course_id, title, description)
-VALUES (%s, '%s', \"%s\")""" % (course_id,
-                              course['result']['name'],
-                              course['result']['description'])
+            sql = """INSERT INTO courseAdvisor_course(id, courseCodes, title, description)
+VALUES (%s, '%s', '%s', \"%s\")""" % (course_id,
+                                     json.dumps(course['result']['aliases']),
+                                     course['result']['name'],
+                                     course['result']['description'])
             execute(sql, db)
 
             aliases = course['result']['aliases']
             for alias in aliases:
+                # Make sure all the departments exist in the database
                 dept = alias[0:alias.find('-')]
-                print dept
-                sql = """INSERT IGNORE INTO courseAdvisor_department(name)
+                sql = """INSERT IGNORE INTO courseAdvisor_department(code)
 VALUES ('%s')""" % dept
+                execute(sql, db)
+
+                sql = """INSERT INTO courseAdvisor_course_departments(course_id, department_id)
+SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
+                                                                  dept)
+
+                #print sql
                 execute(sql, db)
 
         db.close()
