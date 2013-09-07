@@ -1,3 +1,5 @@
+import json
+
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -13,9 +15,9 @@ def course_search(request):
 	coursecode = request.POST['coursecode']
 	db = DatabaseManager()
 	courses = db.determine_searched_course(coursecode)
-	for course in courses:
-		print course
-        return HttpResponse('success')
+	print courses
+	jsonified = json.dumps(courses)
+        return HttpResponse(jsonified)
 
 def index(request):
 	return render(request, 'courseAdvisor/index.html')
