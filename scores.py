@@ -39,10 +39,12 @@ class DatabasePopulater:
             try:
                 cursor.execute(sql)
                 db.commit()
+                return True
             except Exception as e:
                 print "\n~~~~~~~~FAILED: " + sql
                 print e
                 db.rollback()
+                return False
 
         def escape(val):
             return val.replace("'", "\\'")
@@ -61,7 +63,8 @@ VALUES (%s, '%s', '%s', '%s')""" % (course_id,
                                     escape(json.dumps(course['result']['aliases'])),
                                     escape(course['result']['name']),
                                     escape(course['result']['description']))
-            execute(sql, db)
+            if not execute(sql, db):
+                pp.pprint(course)
 
             aliases = course['result']['aliases']
             for alias in aliases:
@@ -71,7 +74,7 @@ VALUES (%s, '%s', '%s', '%s')""" % (course_id,
 VALUES ('%s')""" % dept
                 execute(sql, db)
 
-                sql = """INSERT INTO courseAdvisor_course_departments(course_id, department_id)
+                sql = """INSERT IGNORE INTO courseAdvisor_course_departments(course_id, department_id)
 SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
                                                                   dept)
 
