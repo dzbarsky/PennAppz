@@ -100,7 +100,7 @@ SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
                 course_ids.append(course['id'])
         return course_ids
 
-    def populate_database(self):
+    def populate_database(self, instructors=False):
         def escape(val):
             return val.replace("'", "\\'")
 
@@ -149,26 +149,27 @@ SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
 
 
         # Populate the instructor tables.
-        for instructor in self.get_data("/instructors")['result']['values']:
-            instructor_data = self.get_data(instructor['path'])
+        if instructors:
+            for instructor in self.get_data("/instructors")['result']['values']:
+                instructor_data = self.get_data(instructor['path'])
 
-            # Add the instructor the instructor table.
-            sql = """
+                # Add the instructor the instructor table.
+                sql = """
 INSERT INTO courseAdvisor_instructor(name)
 VALUES ('%s')""" % instructor_data['result']['name']
-            self.executeQuery(sql)
+                self.executeQuery(sql)
 
-            # Add the classes the instructor teaches to the pivot table.
-            for review in instructor_data['result']['reviews']['values']:
-                for alias in review['section']['aliases']:
-                    sql = """
+                # Add the classes the instructor teaches to the pivot table.
+                for review in instructor_data['result']['reviews']['values']:
+                    for alias in review['section']['aliases']:
+                        sql = """
 INSERT IGNORE INTO courseAdvisor_instructor_courses(instructor_id, course_id)
 SELECT instructor.id, coursecodes.course_id
 FROM courseAdvisor_instructor instructor, courseAdvisor_coursecodes coursecodes
 WHERE instructor.name = '%s'
 AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
                                   alias[0 : len(alias) - 4])
-                    self.executeQuery(sql)
+                        self.executeQuery(sql)
 
         self.db.close()
 
@@ -179,7 +180,6 @@ def main(key):
     os.system("python ../manage.py syncdb")
     db.executeQuery("use pennapps")
     db.populate_database()
-    db.determine_searched_course("ANTH 556")
 
 if __name__ == "__main__":
     if (len(sys.argv) < 2):
