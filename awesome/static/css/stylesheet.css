@@ -15,7 +15,7 @@ azure 2 E0EEEE */
 	background-color:#FFFFFF;*/
 }
 
-#header,#searchbar,#sidebar,#main,#descrip {
+#header,#searchbar,#sidebar,#main,#descrip,#subheader,#surheader {
 	font-family:'Quattrocento Sans', sans-serif, bold;
 	color:#000000;
 }
@@ -29,6 +29,22 @@ azure 2 E0EEEE */
 	border-bottom-width:1px;
 }
 
+#surheader{
+	font-size:1.2em;
+	position:absolute;
+	top:20px;
+	margin-left:5px;
+	color:#000;
+}
+
+#subheader{
+	font-size:1em;
+	position:absolute;
+	top:60px;
+	left:230px;
+	color:#666;
+}
+
 #main{
 	top:120px;
 	width:73%;
@@ -38,17 +54,17 @@ azure 2 E0EEEE */
 
 #searchbar{
 	text-align: center;
-	top:20px;
+	top:100px;
 	font-size:2em;
-	margin-left:200px;
-	width:500px;
+	margin-left:100px;
+	width:750px;
 	/*-webkit-appearance: none;*/
 }
 
 #textbox{
 	font-family:'Quattrocento Sans', sans-serif, bold;
 	font-size:20px;
-	width:250px;
+	width:300px;
 	height:25px;
 }
 
@@ -61,11 +77,27 @@ azure 2 E0EEEE */
 	height:300px;
 	margin-left:100px; 
 	background-color:#E0EEEE;
-	text-align: center;
-	line-height:300px;
+	/*text-align: center;*/
+	/*line-height:300px;*/
 	/*border-style:solid;
 	border-width:2px;
 	border-color:#000000;	*/
+}
+
+#code,#title,#c_descrip{
+	position:relative;
+	padding:5px;
+	top:0;
+}
+#code{
+	font-size:1em;
+}
+#title{
+	font-size:0.8em;
+	font-style: italic;
+}
+#c_descrip{
+	font-size:0.5em;
 }
 
 #eval{
@@ -93,7 +125,8 @@ azure 2 E0EEEE */
 	color:#666;
 	position:absolute;
 	top:460px;
-	left:600px;
+	right:20px;
+	text-align:center;
 }
 
 #go{
