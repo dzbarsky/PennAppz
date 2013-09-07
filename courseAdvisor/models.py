@@ -39,3 +39,4 @@ class Links(models.Model):
 class Courses_Keywords(models.Model):
 	course_id=models.ForeignKey('Course')
 	keyword_id=models.ForeignKey('Keyword')
+	number=models.IntegerField()
