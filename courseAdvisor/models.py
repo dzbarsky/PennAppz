@@ -8,7 +8,7 @@ class Department(models.Model):
 		return name
 
 class Course(models.Model):
-	courseCodes=models.CharField(max_length=1500)
+	courseCodes=models.CharField(max_length=1500,null=True)
 	title=models.CharField(max_length=60)
 	description=models.CharField(max_length=1500,null=True)
 	keywords=models.ManyToManyField('Keyword')
