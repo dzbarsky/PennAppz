@@ -4,11 +4,13 @@ import requests
 import simplejson as json
 import MySQLdb
 
+import os
+
 import pprint
 import nltk
 import string
 
-class Database:
+class DatabaseManager:
     def __init__(self, key=None):
         self.key = key
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
@@ -171,7 +173,11 @@ AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
         self.db.close()
 
 def main(key):
-    db = Database(key)
+    db = DatabaseManager(key)
+    db.executeQuery("drop database pennapps;")
+    db.executeQuery("create database pennapps;")
+    os.system("python ../manage.py syncdb")
+    db.executeQuery("use pennapps")
     db.populate_database()
     db.determine_searched_course("ANTH 556")
 
