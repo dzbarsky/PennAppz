@@ -4,12 +4,14 @@ import requests
 import simplejson as json
 import MySQLdb
 
+import os
+
 import pprint
 import nltk
 import string
 import re
 
-class Database:
+class DatabaseManager:
     def __init__(self, key=None):
         self.key = key
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
@@ -33,12 +35,14 @@ class Database:
             self.db.commit()
             return cursor.fetchall()
         except Exception as e:
-            print "\n~~~~~~~~FAILED: " + sql
+            print "\n~~~~~~~~QUERY FAILED: " + sql
             print e
             self.db.rollback()
             return None
 
-    def create_tags(self, description, course_id):
+    def create_tags(self, description, title, course_id):
+        # Add keywords from the title to the description, weighing them by 3x.
+        description = description + " " + title + " " + title + " " + title
         # Strip punctuation
         text = ''.join(ch for ch in description if ch not in string.punctuation)
         text = nltk.word_tokenize(text)
@@ -89,20 +93,15 @@ SELECT %s, %s, id FROM courseAdvisor_keyword WHERE word='%s'""" % (course_id,
                 course_ids.append(course['id'])
         return course_ids
 
-    def populate_database(self):
+    def populate_database(self, instructors=False):
         def escape(val):
             return val.replace("'", "\\'")
 
         pp = pprint.PrettyPrinter(indent=4)
-        #course = self.get_data("/instructors/1-JACK-TOPIOL")
-        #pp.pprint(course)
-        #course = self.get_data("/courses/" + str(self.get_courses()[0]))
-        #pp.pprint(course)
 
         # Populate the course tables
         for course_id in self.get_courses():
             course = self.get_data("/courses/" + str(course_id))
-            #pp.pprint(course)
 
             # Insert a course into the courses table
             sql = """
@@ -134,25 +133,29 @@ SELECT %s, id FROM courseAdvisor_department WHERE code='%s'""" % (course_id,
                                                                   dept)
 
                 self.executeQuery(sql)
-            self.create_tags(course['result']['description'], course_id)
-
+            self.create_tags(course['result']['description'],
+                             course['result']['title'],
+                             course_id)
 
         self.db.close()
         # Populate the instructor tables.
 '''
         for instructor in self.get_data("/instructors")['result']['values']:
             instructor_data = self.get_data(instructor['path'])
+        if instructors:
+            for instructor in self.get_data("/instructors")['result']['values']:
+                instructor_data = self.get_data(instructor['path'])
 
-            # Add the instructor the instructor table.
-            sql = """
+                # Add the instructor the instructor table.
+                sql = """
 INSERT INTO courseAdvisor_instructor(name)
 VALUES ('%s')""" % instructor_data['result']['name']
-            self.executeQuery(sql)
+                self.executeQuery(sql)
 
-            # Add the classes the instructor teaches to the pivot table.
-            for review in instructor_data['result']['reviews']['values']:
-                for alias in review['section']['aliases']:
-                    sql = """
+                # Add the classes the instructor teaches to the pivot table.
+                for review in instructor_data['result']['reviews']['values']:
+                    for alias in review['section']['aliases']:
+                        sql = """
 INSERT IGNORE INTO courseAdvisor_instructor_courses(instructor_id, course_id)
 SELECT instructor.id, coursecodes.course_id
 FROM courseAdvisor_instructor instructor, courseAdvisor_coursecodes coursecodes
@@ -164,7 +167,11 @@ AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
 
 
 def main(key):
-    db = Database(key)
+    db = DatabaseManager(key)
+    db.executeQuery("drop database pennapps;")
+    db.executeQuery("create database pennapps;")
+    os.system("python ../manage.py syncdb")
+    db.executeQuery("use pennapps")
     db.populate_database()
 
 if __name__ == "__main__":

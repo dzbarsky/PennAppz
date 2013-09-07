@@ -27,11 +27,11 @@ class Course(models.Model):
 		return title
 
 class CourseCodes(models.Model):
-    code=models.CharField(max_length=10)
+    code=models.CharField(max_length=10, unique=True)
     course=models.ForeignKey('Course')
 
 class Keyword(models.Model):
-	word=models.CharField(max_length=30,unique=True)
+	word=models.CharField(max_length=50,unique=True)
 	def __unicode__(self):
 		return word
 

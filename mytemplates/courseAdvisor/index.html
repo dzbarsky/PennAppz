@@ -1,9 +1,57 @@
-<!DOCTYPE=html>
-<button>Click Me!</button>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hack</title>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<script>
+    <!--you need this source tag to do anything with jQuery-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+    <!-- you need this src to include your javascript file-->
+    <script type="text/javascript" src="static/js/script.js"></script>
+
+    <!-- you need this src to include your css file-->
+    <link rel="stylesheet" type="text/css" href="static/css/stylesheet.css"/>
+
+    <!-- jQuery Flippy effect registered under the MIT license-->
+    <script type="text/javascript" src="static/js/jquery.flippy.js"></script>
+
+    <!--header font-->
+    <link href='http://fonts.googleapis.com/css?family=Yeseva+One|Happy+Monkey|Quattrocento+Sans' rel='stylesheet' type='text/css'>
+
+    <script>
 $(document).on('click','button',function() {
-	$.post('course_search/',{coursecode:'SARS 105'});
+  $.post('course_search/',{coursecode:'SARS 105'});
 });
-</script>
+    </script>
+  </head>
+  <!-- <body bgcolor='#B0E2FF'> -->
+  <body>
+
+    <div id="header">nemo</div>
+    <div id="main">
+      <form id="searchbar"> search for a course you enjoyed:
+        <input id="textbox" type="text" name="keyword" placeholder="enter course code">
+        <input type="submit" value="GO">
+      </form>
+      <div class="flipbox-container">
+        <div class="response">
+      </div></div>
+      <div id="eval">is this a good recommendation?</div>
+      <div id="buttons">
+        <img class="icon" style="cursor:pointer" id="check"
+        src="static/images/check1.png"></img>
+        <img class="icon" style="cursor:pointer" id="X" src="static/images/X1.png"></img>
+        <img class="icon" style="cursor:pointer" id="new" src="static/images/new1.png"></img>
+        <img class="icon" style="cursor:pointer" id="save" src="static/images/save1.png"></img>
+      </div>
+       <div id="descrip"></div>
+    </div>
+
+    <div id="sidebar">
+
+    </div>
+
+
+
+    </body>
+</html>
