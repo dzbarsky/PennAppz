@@ -75,10 +75,13 @@ $("#new").click(function(){
 });
 
 $("#random").click(function(){
-	$(".response").flippy({
-		verso:"random class!",
-		duration:"500",
-		color_target: "#E0EEEE"
+	$.post('random_course/',function(response) {
+		$(".response").flippy({
+			verso:response,
+			duration:"500",
+			color_target: "#E0EEEE"
+		});
+		alert('hey');
 	});
 	return false;
 });
@@ -125,6 +128,20 @@ $("#random").hover(function(){
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
+});
+
+$(document).on('click',"#check",function() {
+	$.post('user_feedback/',
+		{ searched_course: $('input[name=keyword]').val(),
+		  courseid2: $('#this_course').text(),
+		  feedback: 'thumbs_up' });
+});
+
+$(document).on('click',"#x",function() {
+	$.post('user_feedback/',
+		{ searched_course: $('input[name=keyword]').val(),
+		  courseid2: $('#this_course').text(),
+		  feedback: 'thumbs_down' });
 });
 
 $("#save").hover(function(){

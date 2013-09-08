@@ -26,26 +26,27 @@ class DatabaseManager:
         random_course = self.executeQuery(sql)
         return random_course
 
-    def check_course(curr_course,sugg_course):
-        course1=min(curr_course['id'],sugg_course['id'])
-        course2=max(curr_course['id'],sugg_course['id'])
+    def thumbs_up(self,curr_course,sugg_course):
+        course1 = min(curr_course.id,sugg_course.id)
+        course2 = max(curr_course.id,sugg_course.id)
 
-        #if users clicks like, increase link strength by 1
-        sql="""UPDATE nemo_links
-        SET strength=strength+1
-        WHERE course1_id = '%s' AND course2_id = '%s'""" (course1,course2)
+        sql = """UPDATE nemo_links
+        SET strength = strength + 1
+        WHERE course1_id = '%s' 
+	AND course2_id = '%s'
+	""" % (course1,course2)
         self.executeQuery(sql)
 
-
-    def ex_course(curr_course,sugg_course):
-        course1=min(curr_course['id'],sugg_course['id'])
-        course2=max(curr_course['id'],sugg_course['id'])
+    def thumbs_down(self,curr_course,sugg_course):
+        course1 = min(curr_course.id,sugg_course.id)
+        course2 = max(curr_course.id,sugg_course.id)
 
         sql="""UPDATE nemo_links
-        SET strength=strength-1
-        WHERE course1_id = '%s' AND course2_id = '%s'""" (course1,course2)
+        SET strength = strength - 1
+        WHERE course1_id = '%s' 
+	AND course2_id = '%s'
+	""" % (course1,course2)
         self.executeQuery(sql)
-
 
     def recommend_courses(self, entered_string):
         course = self.determine_searched_course(entered_string)
@@ -87,7 +88,6 @@ class DatabaseManager:
 		WHERE nemo_course.id IN (%s) ;
 		""" % recsString)
 	for c in coursecodes:
-	    print c
 	    recs[c['id']]['coursecodes'].append(c['code'])
 	recsArray = []
 	for rec in recs.iteritems():
@@ -220,6 +220,10 @@ class DatabaseManager:
         if len(searched_course) is 0:
             return None
 	return searched_course.values()[0]
+
+    def find_course(self, course_id):
+	course = Course.objects.get(id=course_id)
+	return course
 
     def query_to_dicts(self, query_string, *query_args):
 	cursor = self.db.cursor()
