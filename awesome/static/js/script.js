@@ -20,7 +20,7 @@ $("#searchbar").submit(function(){
 var processData = function() {
   var course = allResponses.shift(),
       courseHtml = $('<div id="course"></div>');
-      current_code = course["coursecodes"];
+      current_code = course["coursecodes"][0];
 
 	$('#searchbar').animate({
 	     top: '20px',
