@@ -2,7 +2,7 @@ $(document).ready(function(){
 
 $(".response,#eval,#buttons").hide();
 
-var allResponses;
+var allResponses = [];
 
 //WHEN USER HITS SUBMIT
 $("#searchbar").submit(function(){
@@ -10,7 +10,9 @@ $("#searchbar").submit(function(){
   var code = $('input[name=keyword]').val();
   $.post('course_search/',{coursecode: code}, function(response) {
       var json = $.parseJSON(response);
-      allResponses = json;
+      for (var field in json) {
+          allResponses.push(json[field]);
+      }
       processData();
   });
   return false;
