@@ -22,10 +22,14 @@ class DatabaseManager:
     def recommend_courses(self, entered_string):
         course = self.determine_searched_course(entered_string)
         if course is None:
-	    print 'None'
             return None
-	if not course['preSearched']:
-	    self.generate_course_links(course)
+        if not course['preSearched']:
+            self.generate_course_links(course)
+            sql="""
+#UPDATE nemo_course SET preSearched=True
+#WHERE course_id=%s""" % course['id']
+            self.executeQuery(sql)
+
 	recommendations = self.query_to_dicts("""
 	SELECT c1.*, l1.strength
 	FROM nemo_course c1
