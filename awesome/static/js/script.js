@@ -8,11 +8,17 @@ var allResponses = [];
 var current_code;
 
 //WHEN USER HITS SUBMIT
-$("#searchbar").submit(function(){
+$(document).on('click','#submit',function(){
 
 	$("#load").show();
 
   var code = $('input[name=keyword]').val();
+    $('#check-disabled,#X-disabled,#new-disabled').fadeTo('slow',1,function() {
+	var cl = $(this).attr('class').replace( '-disabled','');
+	$(this).removeAttr('class').attr('class',cl);
+	var id = $(this).attr('id').replace('-disabled','');
+	$(this).removeAttr('id').attr('id',id);
+     });
   $.post('course_search/',{coursecode: code}, function(response) {
       allResponses = $.parseJSON(response);
       processData();
@@ -66,19 +72,19 @@ $("#submit").mouseup(function(){
 	$(this).css('background-color','#5c80cb');
 });
 
-$(".icon").mousedown(function(){
+$(document).on('mousedown','.icon',function(){
 	// $(this).fadeOut();
 	$(this).animate({
 		opacity:0.7,
 	},100);
 });
-$(".icon").mouseup(function(){
+$(document).on('mouseup','.icon',function(){
 	$(this).animate({
 		opacity:1,
 	},100);
 });
 
-$("#new").click(function(){
+$(document).on('click','#new',function(){
 	$(".response").flippy({
 		verso:courseHtml,
 		duration:"500",
@@ -96,7 +102,13 @@ $("#new").click(function(){
 	return false;
 });
 
-$("#random").click(function(){
+$(document).on('click','#random',function(){
+	$('#check,#X,#new').fadeTo('slow',0.1,function() {
+		var cl = $(this).attr('class') + '-disabled';
+		$(this).removeAttr('class').attr('class',cl);
+		var id = $(this).attr('id') + '-disabled';
+		$(this).removeAttr('id').attr('id',id);
+	});
 	$.post('random_course/',function(response) {
 		$(".response").flippy({
 			verso: courseHtml,
@@ -109,7 +121,7 @@ $("#random").click(function(){
 	return false;
 });
 
-$("#save").click(function(){
+$(document).on('click','#new',function(){
 	$(document.createElement('div')).attr('id', 's1').attr('style','cursor:pointer').height('40px').width($("#sidebar").width()).text(current_code).css({ 'font-size':'0.8em','background-color': '#E0EEEE', padding:'8px', position: 'relative', left: 0, top: 0, margin: "5px", textAlign: "left", 'line-height':'40px', color: "#000", 'border-radius':'10px' }).prependTo($('#sidebar')).hide();
 	$(document.createElement('div')).attr('class','close').text('x').css({position:'absolute',right:10, 'text-align':'right', 'line-height':'40px', width:'20px',height:'40px',color:'#fff'}).prependTo($('#s1'));
 	$("#s1").slideDown();
@@ -125,28 +137,28 @@ $(document).on('click','.close',function() {
 	});
 });
 
-$("#check").hover(function(){
+$(document).on('hover','#check',function(){
 	$("#descrip").text("I like this recommendation!");
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
 });
 
-$("#X").hover(function(){
+$(document).on('hover','#X',function(){
 	$("#descrip").text("I hate this recommendation.");
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
 });
 
-$("#new").hover(function(){
+$(document).on('hover','#new',function(){
 	$("#descrip").text("I'd like a new recommendation.");
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
 });
 
-$("#random").hover(function(){
+$(document).on('hover','#random',function(){
 	$("#descrip").text("Generate a random course for me!");
 	$("#descrip").fadeIn(100);
 },function(){
