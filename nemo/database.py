@@ -58,12 +58,14 @@ class DatabaseManager:
 		ON nemo_coursecodes.course_id = nemo_course.id 
 		WHERE nemo_course.id IN (%s) ;
 		""" % recsString)
-        pp = pprint.PrettyPrinter(indent=4)
-	pp.pprint(recs)
 	for c in coursecodes:
 	    print c
 	    recs[c['id']]['coursecodes'].append(c['code'])
-	return recs
+	recsArray = []
+	for rec in recs.iteritems():
+	    recsArray.append(rec[1])
+	recsArray.sort(key=lambda c: c['strength'], reverse=True)
+	return recsArray[1:]
 
     def find_relevant_courses(self, course):
 	
