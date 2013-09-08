@@ -19,6 +19,34 @@ class DatabaseManager:
         self.key = key
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
 
+    def generate_random_course(self):
+        sql = """SELECT *
+        FROM nemo_course
+        ORDER BY RAND() LIMIT 1"""
+        random_course = self.executeQuery(sql)
+        return random_course
+
+     def check_course(curr_course,sugg_course):
+        course1=min(curr_course['id'],sugg_course['id'])
+        course2=max(curr_course['id'],sugg_course['id'])
+
+        #if users clicks like, increase link strength by 1
+        sql="""UPDATE nemo_links
+        SET strength=strength+1
+        WHERE course1_id = '%s' AND course2_id = '%s'""" (course1,course2)
+        self.executeQuery(sql)
+
+
+    def ex_course(curr_course,sugg_course):
+        course1=min(curr_course['id'],sugg_course['id'])
+        course2=max(curr_course['id'],sugg_course['id'])
+
+        sql="""UPDATE nemo_links
+        SET strength=strength-1
+        WHERE course1_id = '%s' AND course2_id = '%s'""" (course1,course2)
+        self.executeQuery(sql)
+
+
     def recommend_courses(self, entered_string):
         course = self.determine_searched_course(entered_string)
         if course is None:
