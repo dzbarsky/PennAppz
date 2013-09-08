@@ -22,27 +22,47 @@ class DatabaseManager:
     def recommend_courses(self, entered_string):
         course = self.determine_searched_course(entered_string)
         if course is None:
-	    print 'None'
             return None
-	if not course['preSearched']:
-	    self.generate_course_links(course)
+        if not course['preSearched']:
+            self.generate_course_links(course)
+            sql="""
+#UPDATE nemo_course SET preSearched=True
+#WHERE course_id=%s""" % course['id']
+            self.executeQuery(sql)
+
 	recommendations = self.query_to_dicts("""
-	SELECT c1.*, l1.strength
-	FROM nemo_course c1
-	JOIN nemo_links AS l1
-	ON l1.course1_id = c1.id
-	WHERE l1.course2_id = %s
-	UNION
-	SELECT c2.*, l2.strength
-	FROM nemo_course c2
-	JOIN nemo_links AS l2
-	ON l2.course2_id = c2.id
-	WHERE l2.course1_id = %s
-	ORDER BY strength DESC
-	""" % (course['id'], course['id']))
-	recs = []
+		SELECT c1.*, l1.strength
+		FROM nemo_course c1
+		JOIN nemo_links AS l1
+		ON l1.course1_id = c1.id
+		WHERE l1.course2_id = %s
+		UNION
+		SELECT c2.*, l2.strength
+		FROM nemo_course c2
+		JOIN nemo_links AS l2
+		ON l2.course2_id = c2.id
+		WHERE l2.course1_id = %s
+		ORDER BY strength DESC
+		""" % (course['id'], course['id']))
+	ids = []
+	recs = dict()
 	for rec in recommendations:
-	    recs.append(rec)
+	    rec['coursecodes'] = []
+            recs[rec['id']] = rec
+	    ids.append(str(rec['id']))
+	recsString = ','.join(ids)
+	coursecodes = self.query_to_dicts("""
+		SELECT nemo_course.id, nemo_coursecodes.code 
+		FROM nemo_course 
+		JOIN nemo_coursecodes 
+		ON nemo_coursecodes.course_id = nemo_course.id 
+		WHERE nemo_course.id IN (%s) ;
+		""" % recsString)
+        pp = pprint.PrettyPrinter(indent=4)
+	pp.pprint(recs)
+	for c in coursecodes:
+	    print c
+	    recs[c['id']]['coursecodes'].append(c['code'])
 	return recs
 
     def find_relevant_courses(self, course):
