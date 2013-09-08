@@ -2,19 +2,21 @@ $(document).ready(function(){
 
 $(".response,#eval,#buttons").hide();
 
-var allResponses;
+var allResponses = [];
 
 //WHEN USER HITS SUBMIT
 $("#searchbar").submit(function(){
-//moves searchbar up
+
   var code = $('input[name=keyword]').val();
   $.post('course_search/',{coursecode: code}, function(response) {
       var json = $.parseJSON(response);
-      allResponses = json;
+      for (var field in json) {
+          allResponses.push(json[field]);
+      }
       processData();
   });
   return false;
-})
+});
 
 var processData = function() {
   var course = allResponses.shift(),
@@ -23,19 +25,18 @@ var processData = function() {
 	$('#searchbar').animate({
 	     top: '20px',
    	}, 300, "linear");
-//buttons, response box appears
 	$("#buttons,#eval,.response").fadeIn();
-//flips response panel
 	$(".response").flippy({
-		//verso: $("input:first").val(),
 		verso: courseHtml,
 		duration:"500",
 		color_target: "#E0EEEE",
 		//color_target:'#CAEEFD',
 		onFinish: function(){
-      for (var field in course) {
-        $('#course').append(course[field] + '<br>');
-      }
+	        // $('#course').append(course[field] + '<br>');
+	        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
+	        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
+	        $(document.createElement('div')).attr('id','ratings').text(course["difficulty"],course["instructorQuality"],course["courseQuality"]).appendTo(courseHtml);
+	      
 		}
 	});
 	
@@ -84,6 +85,8 @@ $("#save").click(function(){
 	$(document.createElement('div')).attr('class','close').text('x').css({position:'absolute',right:10, 'text-align':'right', 'line-height':'40px', width:'20px',height:'40px',color:'#fff'}).prependTo($('#s1'));
 	$("#s1").slideDown();
 });
+
+
 
 
 
