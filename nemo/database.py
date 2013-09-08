@@ -85,9 +85,9 @@ SELECT %s, %s, id FROM nemo_keyword WHERE word='%s'""" % (course_id,
     def get_courses(self):
         course_ids = []
         departments = self.get_data("/depts")
-        if True:
-            dept = departments['result']['values'][0]
-        #for dept in departments['result']['values']:
+        #if True:
+        #    dept = departments['result']['values'][0]
+        for dept in departments['result']['values']:
             courses = self.get_data(dept['path'])
             for course in courses['result']['coursehistories']:
                 course_ids.append(course['id'])
@@ -100,7 +100,14 @@ SELECT %s, %s, id FROM nemo_keyword WHERE word='%s'""" % (course_id,
         pp = pprint.PrettyPrinter(indent=4)
 
         # Populate the course tables
-        for course_id in self.get_courses():
+        print "populating courses"
+        courses = self.get_courses()
+        print "got courses"
+        curr = 0
+        for course_id in courses:
+            if curr % 100 is 0:
+                print "Handling course %s of %s\n" % (curr, len(courses))
+            curr = curr + 1
             course = self.get_data("/courses/" + str(course_id))
 
             # Compute the ratings for the course
@@ -127,7 +134,7 @@ SELECT %s, %s, id FROM nemo_keyword WHERE word='%s'""" % (course_id,
 
             # Insert a course into the courses table
             sql = """
-INSERT INTO nemo_course(id, title, description, preSearched,
+INSERT IGNORE INTO nemo_course(id, title, description, preSearched,
 difficulty, instructorQuality, courseQuality)
 VALUES (%s, '%s', '%s', FALSE, %s, %s, %s)""" % (course_id,
                                                  escape(course['result']['name']),
@@ -141,7 +148,7 @@ VALUES (%s, '%s', '%s', FALSE, %s, %s, %s)""" % (course_id,
             # Insert the course codes
             for alias in course['result']['aliases']:
                 sql = """
-INSERT INTO nemo_coursecodes(code, course_id)
+INSERT IGNORE INTO nemo_coursecodes(code, course_id)
 VALUES ('%s', %s)""" % (alias, course_id)
                 self.executeQuery(sql)
 
@@ -164,42 +171,52 @@ SELECT %s, id FROM nemo_department WHERE code='%s'""" % (course_id,
                              course['result']['name'],
                              course_id)
 
-        self.db.close()
         # Populate the instructor tables.
-'''
         for instructor in self.get_data("/instructors")['result']['values']:
             instructor_data = self.get_data(instructor['path'])
         if instructors:
-            for instructor in self.get_data("/instructors")['result']['values']:
-                instructor_data = self.get_data(instructor['path'])
+            self.populate_instructors()
+        self.db.close()
 
-                # Add the instructor the instructor table.
-                sql = """
+    def populate_instructors(self):
+        def escape(val):
+            return val.replace("'", "\\'")
+        instructors = self.get_data("/instructors")['result']['values']
+        curr = 0
+        for instructor in instructors:
+            if curr % 100 is 0:
+                print "Handling instructors %s of %s\n" % (curr, len(instructors))
+            curr = curr + 1
+            instructor_data = self.get_data(instructor['path'])
+
+            # Add the instructor the instructor table.
+            sql = """
 INSERT INTO nemo_instructor(name)
-VALUES ('%s')""" % instructor_data['result']['name']
-                self.executeQuery(sql)
+VALUES ('%s')""" % escape(instructor_data['result']['name'])
+            self.executeQuery(sql)
 
-                # Add the classes the instructor teaches to the pivot table.
-                for review in instructor_data['result']['reviews']['values']:
-                    for alias in review['section']['aliases']:
-                        sql = """
+            # Add the classes the instructor teaches to the pivot table.
+            for review in instructor_data['result']['reviews']['values']:
+                for alias in review['section']['aliases']:
+                    sql = """
 INSERT IGNORE INTO nemo_instructor_courses(instructor_id, course_id)
 SELECT instructor.id, coursecodes.course_id
 FROM nemo_instructor instructor, nemo_coursecodes coursecodes
 WHERE instructor.name = '%s'
-AND coursecodes.code = '%s'""" % (instructor_data['result']['name'],
+AND coursecodes.code = '%s'""" % (escape(instructor_data['result']['name']),
                                   alias[0 : len(alias) - 4])
-                    self.executeQuery(sql)
-'''
+                self.executeQuery(sql)
 
+        self.db.close()
 
 def main(key):
     db = DatabaseManager(key)
-    db.executeQuery("drop database pennapps;")
-    db.executeQuery("create database pennapps;")
-    os.system("python ../manage.py syncdb")
-    db.executeQuery("use pennapps")
-    db.populate_database()
+    #db.executeQuery("drop database pennapps;")
+    #db.executeQuery("create database pennapps;")
+    #os.system("python ../manage.py syncdb")
+    #db.executeQuery("use pennapps")
+    #db.populate_database()
+    db.populate_instructors()
 
 if __name__ == "__main__":
     if (len(sys.argv) < 2):
