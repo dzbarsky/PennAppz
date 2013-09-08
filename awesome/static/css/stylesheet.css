@@ -89,7 +89,7 @@ chillest ACD0FD*/
 	font-size:2em;
 	/*visibility:hidden;*/
 	top:90px;
-	width:700px;
+	width:800px;
 	height:300px;
 	margin-left:100px; 
 	/*background-color:#E8E8E8;*/
@@ -103,7 +103,7 @@ chillest ACD0FD*/
 	border0
 }
 
-#code,#title,#c_descrip{
+#code,#title,#c_descrip,#ratings{
 	position:relative;
 	padding:5px;
 	top:0;
@@ -116,6 +116,9 @@ chillest ACD0FD*/
 	font-style: italic;
 }
 #c_descrip{
+	font-size:0.5em;
+}
+#ratings{
 	font-size:0.5em;
 }
 

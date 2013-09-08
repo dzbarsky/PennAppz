@@ -35,7 +35,11 @@ var processData = function() {
 	        // $('#course').append(course[field] + '<br>');
 	        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
 	        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
-	        $(document.createElement('div')).attr('id','ratings').text(course["difficulty"],course["instructorQuality"],course["courseQuality"]).appendTo(courseHtml);
+	        $(document.createElement('div')).attr('id','ratings');
+	        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]).appendTo("#ratings");
+	        $(document.createElement('div')).attr('id','cqual').text("Course Quality: "+course["courseQuality"]).appendTo("#ratings");
+	        $(document.createElement('div')).attr('id','iqual').text("Instructor Quality: "+course["instructorQuality"]).appendTo("#ratings");
+	        
 	      
 		}
 	});
