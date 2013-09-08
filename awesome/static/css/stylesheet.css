@@ -3,7 +3,15 @@ palegreen #9AFF9A
 lavender blush 2 #EEE0E5
 thistle #D8BFD8
 lightblue 1 BFEFFF 
-azure 2 E0EEEE */
+azure 2 E0EEEE
+gray91 E8E8E8 */
+
+/*
+icon blue 5c80cb
+lighter icon blue 8EB2FD
+chiller 98BCFD
+even more chill A2C6FD
+chillest ACD0FD*/
 
 #header,#main,#sidebar,#searchbar{
 	position:absolute;
@@ -15,34 +23,42 @@ azure 2 E0EEEE */
 	background-color:#FFFFFF;*/
 }
 
-#header,#searchbar,#sidebar,#main,#descrip,#subheader,#surheader {
+#header,#searchbar,#sidebar,#main,#descrip,#subheader,#surheader,#submit {
 	font-family:'Quattrocento Sans', sans-serif, bold;
 	color:#000000;
 }
 
 #header{
+	background-color:#ACD0FD;
+	/*background-color: #5c80cb;*/
+	/*color:#5c80cb;*/
 	font-size:5em;
-	width:97%;
-	height:100px;
-	border-bottom-style:solid;
-	border-bottom-color:#000000;
+	width:105%;
+	height:90px;
+	margin-left:-10px;
+	padding:10px;
+	line-height:100px;
+	/*border-bottom-style:solid;*/
+	/*border-bottom-color:#5c80cb;*/
+	border-bottom-color: #000;
 	border-bottom-width:1px;
 }
 
 #surheader{
 	font-size:1.2em;
 	position:absolute;
-	top:20px;
+	top:35px;
 	margin-left:5px;
-	color:#000;
+	/*color:#5c80cb;*/
 }
 
 #subheader{
 	font-size:1em;
 	position:absolute;
-	top:60px;
+	top:70px;
 	left:230px;
 	color:#666;
+	/*color:#5c80cb;*/
 }
 
 #main{
@@ -72,16 +88,19 @@ azure 2 E0EEEE */
 	position:absolute;
 	font-size:2em;
 	/*visibility:hidden;*/
-	top:100px;
+	top:90px;
 	width:700px;
 	height:300px;
 	margin-left:100px; 
+	/*background-color:#E8E8E8;*/
 	background-color:#E0EEEE;
+	/*background-color: #C0E4FD;*/
 	/*text-align: center;*/
 	/*line-height:300px;*/
 	/*border-style:solid;
 	border-width:2px;
 	border-color:#000000;	*/
+	border0
 }
 
 #code,#title,#c_descrip{
@@ -100,49 +119,51 @@ azure 2 E0EEEE */
 	font-size:0.5em;
 }
 
-#eval{
+/*#eval{
 	top:405px;
 	height:50px;
 	line-height:50px;
-	margin-left:100px;
+	margin-left:275px;
 	text-align:left;
-	font-size:2em;
+	font-size:1.8em;
 	position:absolute;
-}
+}*/
 
-#buttons {
+#buttons{
 	position:absolute;
 	height:50px;
 	top:405px;
-	margin-left:100px;
-	width:700px;
-	text-align:right;
-	/*opacity:0.8;*/
+	margin-left:525px;
 }
+
+
 
 #descrip{
 	font-size:1em;
 	color:#666;
 	position:absolute;
-	top:460px;
-	right:20px;
+	top:420px;
+	margin-left:200px;
 	text-align:center;
 }
 
-#go{
-	height:30px;
-	width:30px;
-	border-radius:15px;
-	background-color:#000000;
-	color:#ffffff;
-	position:absolute;
-	top:20%;
+#submit{
+	border-radius:18px;
+	background-color:#ACD0FD;
+	color:#000;
+	font-size:0.6em;
+	border-color:#fff;
+	border-style:none;
+	text-align:center;
+	line-height: 33px;
+	width:36px;
+	height:36px;
 }
 
 #sidebar{
 	text-align:left;
 	font-size:2em;
-	top:150px;
+	top:190px;
 	width:200px;
 	height:400px;
 	margin-left:860px;
