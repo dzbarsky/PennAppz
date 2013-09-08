@@ -20,18 +20,7 @@ def course_search(request):
     coursecode = request.POST['coursecode']
     db = DatabaseManager()
     courses = db.determine_searched_course(coursecode)
-    json_courses = []
-    print courses
-    for course in courses:
-        json_course = dict()
-        json_course['title'] = course.title
-        json_course['description'] = course.description
-        json_course['difficulty'] = course.difficulty
-        json_course['courseQuality'] = course.courseQuality
-        json_course['instructorQuality'] = course.instructorQuality
-        json_courses.append(json_course)
-
-    jsonified = json.dumps(json_courses, default=decimal_default)
+    jsonified = json.dumps(courses, default=decimal_default)
     return HttpResponse(jsonified)
 
 def index(request):
