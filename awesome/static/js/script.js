@@ -18,6 +18,7 @@ $("#searchbar").submit(function(){
 });
 
 var courseHtml = $('<div id="course"></div>');
+var currentCourseTitle;
 
 var processData = function() {
   var course = allResponses.shift();
@@ -38,7 +39,8 @@ var processData = function() {
 };
 
 var updateCourse = function(course) {
-    var current_code = course["coursecodes"];
+    var current_code = course["coursecodes"][0];
+    currentCourseTitle = course["title"];
     courseHtml.empty();
 	$('#this_course').text(course['id']);
         $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
@@ -73,8 +75,13 @@ $("#new").click(function(){
 		duration:"500",
 		color_target: "#E0EEEE",
     onStart: function() {
-        var course = allResponses.shift();
-        updateCourse(course);
+        var course;
+        do {
+          course = allResponses.shift();
+        } while (course && course["title"] == currentCourseTitle);
+        if (course) {
+          updateCourse(course);
+        }
     }
 	});
 	return false;
