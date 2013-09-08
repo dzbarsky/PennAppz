@@ -21,7 +21,7 @@ var courseHtml = $('<div id="course"></div>');
 var currentCourseTitle;
 
 var processData = function() {
-  var course = allResponses.shift();
+  var course = allResponses ? allResponses.shift() : null;
 
 	$('#searchbar').animate({
 	     top: '20px',
@@ -39,14 +39,19 @@ var processData = function() {
 };
 
 var updateCourse = function(course) {
-    var current_code = course["coursecodes"][0];
-    currentCourseTitle = course["title"];
-    courseHtml.empty();
-        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
-        $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
-        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
+    if (course) {
+        var current_code = course["coursecodes"][0];
+        currentCourseTitle = course["title"];
+        courseHtml.empty();
+            $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
+            $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
+            $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
 
-        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
+            $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
+    } else {
+            courseHtml.empty();
+            $(document.createElement('div')).attr('id','title').text("Sorry, we could not find this course in our database.  Our database is still expanding.  This is a work in progress!").appendTo(courseHtml);
+    }
 }
 
 	$("#submit").mousedown(function(){
