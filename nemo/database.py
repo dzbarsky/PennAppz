@@ -26,7 +26,7 @@ class DatabaseManager:
         random_course = self.executeQuery(sql)
         return random_course
 
-     def check_course(curr_course,sugg_course):
+    def check_course(curr_course,sugg_course):
         course1=min(curr_course['id'],sugg_course['id'])
         course2=max(curr_course['id'],sugg_course['id'])
 
