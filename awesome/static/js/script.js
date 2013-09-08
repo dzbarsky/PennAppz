@@ -18,9 +18,9 @@ $("#searchbar").submit(function(){
 });
 
 var processData = function() {
-  var course = allResponses.shift(),
-      courseHtml = $('<div id="course"></div>');
-      current_code = course["coursecodes"];
+  var course = allResponses.shift();
+  var courseHtml = $('<div id="course"></div>');
+  var current_code = course["coursecodes"];
 
 	$('#searchbar').animate({
 	     top: '20px',
@@ -32,15 +32,11 @@ var processData = function() {
 		color_target: "#E0EEEE",
 		//color_target:'#CAEEFD',
 		onFinish: function(){
-	        // $('#course').append(course[field] + '<br>');
 	        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
 	        $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
 	        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
 	        
 	        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
-	        // $(document.createElement('div')).attr('id','cqual').text("Course Quality: "+course["courseQuality"]).appendTo("#ratings");
-	        // $(document.createElement('div')).attr('id','iqual').text("Instructor Quality: "+course["instructorQuality"]).appendTo("#ratings");
-	        // $("#ratings").appendTo(courseHtml);
 		}
 	});
 	
