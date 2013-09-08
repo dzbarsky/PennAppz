@@ -49,6 +49,8 @@ var processData = function() {
 };
 
 var updateCourse = function(course) {
+	$("#check_fill").hide();
+	$("#x_fill").hide();
     if (course) {
         current_code = course["coursecodes"][0];
         currentCourseTitle = course["title"];
@@ -56,7 +58,13 @@ var updateCourse = function(course) {
         $('#this_course').text(course['id']);
         $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
         $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
-        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
+        var d = course["description"];
+        var len = d.toString().length;
+        if (len>1300) {
+        	a = d.substr(0, 1300) + '...';
+        }
+        else {a=d;}
+        $(document.createElement('div')).attr('id','c_descrip').text(a).appendTo(courseHtml);
 
         if (course["courseQuality"] != -1 &&
             course["instructorQuality"] != -1 &&
@@ -76,13 +84,13 @@ $("#submit").mouseup(function(){
 	$(this).css('background-color','#5c80cb');
 });
 
-$(document).on('mousedown','.icon',function(){
+$(document).on('mousedown','#random,#new,#save',function(){
 	// $(this).fadeOut();
 	$(this).animate({
 		opacity:0.7,
 	},100);
 });
-$(document).on('mouseup','.icon',function(){
+$(document).on('mouseup','#random,#new,#save',function(){
 	$(this).animate({
 		opacity:1,
 	},100);
@@ -123,6 +131,24 @@ $(document).on('click','#random',function(){
 		});
 	});
 	return false;
+});
+
+$(document).on('click',"#check",function() {
+	$.post('user_feedback/',
+		{ searched_course: $('input[name=keyword]').val(),
+		  courseid2: $('#this_course').text(),
+		  feedback: 'thumbs_up' });
+	$("#check_fill").show();
+	$("#x_fill").hide();
+});
+
+$(document).on('click',"#X",function() {
+	$.post('user_feedback/',
+		{ searched_course: $('input[name=keyword]').val(),
+		  courseid2: $('#this_course').text(),
+		  feedback: 'thumbs_down' });
+	$("#check_fill").hide();
+	$("#x_fill").show();
 });
 
 $(document).on('click','#save',function(){
@@ -169,19 +195,7 @@ $(document).on('hover','#random',function(){
 	$("#descrip").fadeOut(100);
 });
 
-$(document).on('click',"#check",function() {
-	$.post('user_feedback/',
-		{ searched_course: $('input[name=keyword]').val(),
-		  courseid2: $('#this_course').text(),
-		  feedback: 'thumbs_up' });
-});
 
-$(document).on('click',"#X",function() {
-	$.post('user_feedback/',
-		{ searched_course: $('input[name=keyword]').val(),
-		  courseid2: $('#this_course').text(),
-		  feedback: 'thumbs_down' });
-});
 
 $("#save").hover(function(){
 	$("#descrip").text("I'd like to save this recommendation.");
