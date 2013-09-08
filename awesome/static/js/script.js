@@ -2,10 +2,24 @@ $(document).ready(function(){
 
 $(".response,#eval,#buttons").hide();
 
+var allResponses;
 
 //WHEN USER HITS SUBMIT
 $("#searchbar").submit(function(){
 //moves searchbar up
+  var code = $('input[name=keyword]').val();
+  $.post('course_search/',{coursecode: code}, function(response) {
+      var json = $.parseJSON(response);
+      allResponses = json;
+      processData();
+  });
+  return false;
+})
+
+var processData = function() {
+  var course = allResponses.shift(),
+      courseHtml = $('<div id="course"></div>');
+
 	$('#searchbar').animate({
 	     top: '20px',
    	}, 300, "linear");
@@ -14,22 +28,19 @@ $("#searchbar").submit(function(){
 //flips response panel
 	$(".response").flippy({
 		//verso: $("input:first").val(),
-		verso: $('<div id="oli"></div>'),
+		verso: courseHtml,
 		duration:"500",
 		color_target: "#E0EEEE",
 		//color_target:'#CAEEFD',
 		onFinish: function(){
-			//insert text in these
-			$(document.createElement('div')).attr('id','c_descrip').text("Learn how to program").prependTo("#oli");
-			$(document.createElement('div')).attr('id','title').text("Intro to Programming").prependTo("#oli");
-			$(document.createElement('div')).attr('id','code').text("CIS 110").prependTo("#oli");
-			$(document.createElement('div')).attr('id','prof').text().prependTo("#oli");
+      for (var field in course) {
+        $('#course').append(course[field] + '<br>');
+      }
 		}
 	});
-
 	
 	return false;
-});
+};
 
 $("#submit").mousedown(function(){
 	$(this).css('background-color','#5c80cb');

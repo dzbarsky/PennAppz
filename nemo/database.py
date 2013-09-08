@@ -22,10 +22,14 @@ class DatabaseManager:
     def recommend_courses(self, entered_string):
         course = self.determine_searched_course(entered_string)
         if course is None:
-	    print 'None'
             return None
-	if not course['preSearched']:
-	    self.generate_course_links(course)
+        if not course['preSearched']:
+            self.generate_course_links(course)
+            sql="""
+#UPDATE nemo_course SET preSearched=True
+#WHERE course_id=%s""" % course['id']
+            self.executeQuery(sql)
+
 	recommendations = self.query_to_dicts("""
 		SELECT c1.*, l1.strength
 		FROM nemo_course c1
@@ -177,6 +181,9 @@ class DatabaseManager:
     def determine_searched_course(self,entered_string):
         matches = re.match(r'([a-zA-Z]{3,4})[-| ]?([0-9]{2,3})',entered_string);
         #strip punctuation from remaining string to get course number
+        if matches is None:
+            return None
+
         course_number = matches.group(1) + '-' + matches.group(2)
 
         searched_course = Course.objects.filter(coursecodes__code__exact=course_number)
