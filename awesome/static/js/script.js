@@ -9,10 +9,7 @@ $("#searchbar").submit(function(){
 
   var code = $('input[name=keyword]').val();
   $.post('course_search/',{coursecode: code}, function(response) {
-      var json = $.parseJSON(response);
-      for (var field in json) {
-          allResponses.push(json[field]);
-      }
+      allResponses = $.parseJSON(response);
       processData();
   });
   return false;
