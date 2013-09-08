@@ -161,6 +161,9 @@ class DatabaseManager:
     def determine_searched_course(self,entered_string):
         matches = re.match(r'([a-zA-Z]{3,4})[-| ]?([0-9]{2,3})',entered_string);
         #strip punctuation from remaining string to get course number
+        if matches is None:
+            return None
+
         course_number = matches.group(1) + '-' + matches.group(2)
 
         searched_course = Course.objects.filter(coursecodes__code__exact=course_number)
