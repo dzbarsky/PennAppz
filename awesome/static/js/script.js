@@ -47,6 +47,7 @@ var updateCourse = function(course) {
     current_code = course["coursecodes"][0];
     currentCourseTitle = course["title"];
     courseHtml.empty();
+	$('#this_course').text(course['id']);
         $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
         $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
         $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
@@ -92,10 +93,9 @@ $("#new").click(function(){
 });
 
 $("#random").click(function(){
-	$(".response").flippy({
-		verso:"random class!",
-		duration:"500",
-		color_target: "#E0EEEE"
+	$.post('random_course/',function(response) {
+		console.log($.parseJSON(response)[0]);
+		updateCourse($.parseJSON(response)[0]);
 	});
 	return false;
 });
@@ -142,6 +142,20 @@ $("#random").hover(function(){
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
+});
+
+$(document).on('click',"#check",function() {
+	$.post('user_feedback/',
+		{ searched_course: $('input[name=keyword]').val(),
+		  courseid2: $('#this_course').text(),
+		  feedback: 'thumbs_up' });
+});
+
+$(document).on('click',"#X",function() {
+	$.post('user_feedback/',
+		{ searched_course: $('input[name=keyword]').val(),
+		  courseid2: $('#this_course').text(),
+		  feedback: 'thumbs_down' });
 });
 
 $("#save").hover(function(){

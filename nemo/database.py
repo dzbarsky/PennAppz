@@ -20,42 +20,64 @@ class DatabaseManager:
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
 
     def generate_random_course(self):
-        sql = """SELECT *
-        FROM nemo_course
-        ORDER BY RAND() LIMIT 1"""
-        random_course = self.executeQuery(sql)
-        return random_course
+	course = Course.objects.order_by('?')[0]
+	coursearr = self.query_to_dicts("""
+		SELECT nemo_course.*
+		FROM nemo_course
+		WHERE nemo_course.id = '%s' ;
+		""" % course.id)
+	coursecodes = self.query_to_dicts("""
+		SELECT nemo_course.*, nemo_coursecodes.code
+		FROM nemo_course
+		JOIN nemo_coursecodes
+		ON nemo_coursecodes.course_id = nemo_course.id
+		WHERE nemo_course.id = '%s' ;
+		""" % course.id)
+	recs = dict()
+	for coursea in coursearr:
+	    coursea['coursecodes'] = []
+	    recs[course.id] = coursea
+	for c in coursecodes:
+	    recs[course.id]['coursecodes'].append(c['code'])
+	recsArray = []
+	for rec in recs.iteritems():
+	    recsArray.append(rec[1])
+	return recsArray
 
-    def check_course(curr_course,sugg_course):
-        course1=min(curr_course['id'],sugg_course['id'])
-        course2=max(curr_course['id'],sugg_course['id'])
-
-        #if users clicks like, increase link strength by 1
-        sql="""UPDATE nemo_links
-        SET strength=strength+1
-        WHERE course1_id = '%s' AND course2_id = '%s'""" (course1,course2)
+    def thumbs_up(self,curr_course,sugg_course):
+        course1 = min(curr_course.id,sugg_course.id)
+        course2 = max(curr_course.id,sugg_course.id)
+        sql = """UPDATE nemo_links
+        SET strength = strength + 1
+        WHERE course1_id = '%s' 
+	AND course2_id = '%s'
+	""" % (course1,course2)
         self.executeQuery(sql)
 
-
-    def ex_course(curr_course,sugg_course):
-        course1=min(curr_course['id'],sugg_course['id'])
-        course2=max(curr_course['id'],sugg_course['id'])
+    def thumbs_down(self,curr_course,sugg_course):
+        course1 = min(curr_course.id,sugg_course.id)
+        course2 = max(curr_course.id,sugg_course.id)
 
         sql="""UPDATE nemo_links
-        SET strength=strength-1
-        WHERE course1_id = '%s' AND course2_id = '%s'""" (course1,course2)
+        SET strength = strength - 1
+        WHERE course1_id = '%s' 
+	AND course2_id = '%s'
+	""" % (course1,course2)
         self.executeQuery(sql)
-
 
     def recommend_courses(self, entered_string):
         course = self.determine_searched_course(entered_string)
+	course = Course.objects.get(id=course['id'])
         if course is None:
             return None
-        if not course['preSearched']:
+	return self.recommendations(course)
+
+    def recommendations(self, course):
+        if not course.preSearched:
             self.generate_course_links(course)
             sql="""
 #UPDATE nemo_course SET preSearched=True
-#WHERE course_id=%s""" % course['id']
+#WHERE course_id=%s""" % course.id
             self.executeQuery(sql)
 
 	recommendations = self.query_to_dicts("""
@@ -71,7 +93,7 @@ class DatabaseManager:
 		ON l2.course2_id = c2.id
 		WHERE l2.course1_id = %s
 		ORDER BY strength DESC
-		""" % (course['id'], course['id']))
+		""" % (course.id, course.id))
 	ids = []
 	recs = dict()
 	for rec in recommendations:
@@ -87,7 +109,6 @@ class DatabaseManager:
 		WHERE nemo_course.id IN (%s) ;
 		""" % recsString)
 	for c in coursecodes:
-	    print c
 	    recs[c['id']]['coursecodes'].append(c['code'])
 	recsArray = []
 	for rec in recs.iteritems():
@@ -111,7 +132,7 @@ class DatabaseManager:
 	AND d.id = cd1.department_id 
 	AND cd1.course_id = %s
 	GROUP BY c2.id ;
-	""" % course['id'])
+	""" % course.id)
 
 	instructor_courses = self.query_to_dicts("""
 	SELECT c2.*, i.name 
@@ -126,7 +147,7 @@ class DatabaseManager:
 	AND i.id = ic1.instructor_id 
 	AND ic1.course_id = %s
 	GROUP BY c2.id ;
-	""" % course['id'])
+	""" % course.id)
 
 	keyword_courses = self.query_to_dicts("""
 	SELECT c2.*, k.word
@@ -140,7 +161,7 @@ class DatabaseManager:
 	AND ck2.course_id = c2.id 
 	AND k.id = ck1.keyword_id 
 	AND ck1.course_id = %s ;
-	""" % course['id'])
+	""" % course.id)
 
 	# Build data structure to hold courses
 	relevant_courses = dict()
@@ -182,7 +203,7 @@ class DatabaseManager:
 
     def generate_course_links(self, entered_course):
         courses = self.find_relevant_courses(entered_course)
-        my_course = courses[entered_course['id']]
+        my_course = courses[entered_course.id]
 
 	linked_courses = self.get_course_links(my_course)
 	
@@ -220,6 +241,10 @@ class DatabaseManager:
         if len(searched_course) is 0:
             return None
 	return searched_course.values()[0]
+
+    def find_course(self, course_id):
+	course = Course.objects.get(id=course_id)
+	return course
 
     def query_to_dicts(self, query_string, *query_args):
 	cursor = self.db.cursor()
