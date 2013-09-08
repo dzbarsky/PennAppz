@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-$(".response,#eval,#buttons").hide();
+$(".response,#eval,#buttons,#load").hide();
 
 var allResponses = [];
 
@@ -8,6 +8,8 @@ var current_code;
 
 //WHEN USER HITS SUBMIT
 $("#searchbar").submit(function(){
+
+	$("#load").show();
 
   var code = $('input[name=keyword]').val();
   $.post('course_search/',{coursecode: code}, function(response) {
@@ -17,11 +19,13 @@ $("#searchbar").submit(function(){
   return false;
 });
 
-var processData = function() {
-  var course = allResponses.shift(),
-      courseHtml = $('<div id="course"></div>');
-      current_code = course["coursecodes"][0];
+var courseHtml = $('<div id="course"></div>');
+var currentCourseTitle;
 
+var processData = function() {
+
+  var course = allResponses.shift();
+      
 	$('#searchbar').animate({
 	     top: '20px',
    	}, 300, "linear");
@@ -31,23 +35,26 @@ var processData = function() {
 		duration:"500",
 		color_target: "#E0EEEE",
 		//color_target:'#CAEEFD',
-		onFinish: function(){
-	        // $('#course').append(course[field] + '<br>');
-	        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
-	        $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
-	        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
-	        
-	        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
-	        // $(document.createElement('div')).attr('id','cqual').text("Course Quality: "+course["courseQuality"]).appendTo("#ratings");
-	        // $(document.createElement('div')).attr('id','iqual').text("Instructor Quality: "+course["instructorQuality"]).appendTo("#ratings");
-	        // $("#ratings").appendTo(courseHtml);
-		}
+		onFinish: updateCourse(course)
 	});
 	
+	$("#load").hide();
+	$("#load").destroy();
 	return false;
 };
 
-$("#submit").mousedown(function(){
+var updateCourse = function(course) {
+    current_code = course["coursecodes"][0];
+    currentCourseTitle = course["title"];
+    courseHtml.empty();
+        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
+        $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
+        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
+
+        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
+}
+
+	$("#submit").mousedown(function(){
 	$(this).css('background-color','#ACD0FD');
 });
 $("#submit").mouseup(function(){
@@ -68,9 +75,18 @@ $(".icon").mouseup(function(){
 
 $("#new").click(function(){
 	$(".response").flippy({
-		verso:"something new",
+		verso:courseHtml,
 		duration:"500",
-		color_target: "#E0EEEE"
+		color_target: "#E0EEEE",
+    onStart: function() {
+        var course;
+        do {
+          course = allResponses.shift();
+        } while (course && course["title"] == currentCourseTitle);
+        if (course) {
+          updateCourse(course);
+        }
+    }
 	});
 	return false;
 });
