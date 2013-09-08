@@ -50,7 +50,7 @@ var processData = function() {
 
 var updateCourse = function(course) {
     if (course) {
-        var current_code = course["coursecodes"][0];
+        current_code = course["coursecodes"][0];
         currentCourseTitle = course["title"];
         courseHtml.empty();
         $('#this_course').text(course['id']);
@@ -125,7 +125,7 @@ $(document).on('click','#random',function(){
 	return false;
 });
 
-$(document).on('click','#new',function(){
+$(document).on('click','#save',function(){
 	$(document.createElement('div')).attr('id', 's1').attr('style','cursor:pointer').height('40px').width($("#sidebar").width()).text(current_code).css({ 'font-size':'0.8em','background-color': '#E0EEEE', padding:'8px', position: 'relative', left: 0, top: 0, margin: "5px", textAlign: "left", 'line-height':'40px', color: "#000", 'border-radius':'10px' }).prependTo($('#sidebar')).hide();
 	$(document.createElement('div')).attr('class','close').text('x').css({position:'absolute',right:10, 'text-align':'right', 'line-height':'40px', width:'20px',height:'40px',color:'#fff'}).prependTo($('#s1'));
 	$("#s1").slideDown();
