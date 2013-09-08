@@ -4,8 +4,6 @@ from django.db import models
 
 class Department(models.Model):
     code=models.CharField(max_length=5,unique=True)
-    def __unicode__(self):
-        return name
 
 class Course(models.Model):
     title=models.CharField(max_length=200)
@@ -26,8 +24,6 @@ class Course(models.Model):
     difficulty=models.DecimalField(max_digits=5, decimal_places=2)
     courseQuality=models.DecimalField(max_digits=5, decimal_places=2)
     instructorQuality=models.DecimalField(max_digits=5, decimal_places=2)
-    def __unicode__(self):
-        return title
 
 class CourseCodes(models.Model):
     code=models.CharField(max_length=10, unique=True)
@@ -35,8 +31,6 @@ class CourseCodes(models.Model):
 
 class Keyword(models.Model):
 	word=models.CharField(max_length=50,unique=True)
-	def __unicode__(self):
-		return word
 
 class Links(models.Model):
 	course1=models.ForeignKey('Course', related_name='course1s')
