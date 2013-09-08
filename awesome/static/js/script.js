@@ -115,6 +115,7 @@ $(document).on('click','#new',function(){
 });
 
 $(document).on('click','#random',function(){
+	$('input[name=keyword]').val('');
 	$('#check,#X,#new').fadeTo('slow',0.1,function() {
 		var cl = $(this).attr('class') + '-disabled';
 		$(this).removeAttr('class').attr('class',cl);
@@ -167,34 +168,33 @@ $(document).on('click','.close',function() {
 	});
 });
 
-$(document).on('hover','#check',function(){
+$('#check').hover(function(){
 	$("#descrip").text("I like this recommendation!");
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
 });
 
-$(document).on('hover','#X',function(){
+$('#X').hover(function(){
 	$("#descrip").text("I hate this recommendation.");
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
 });
 
-$(document).on('hover','#new',function(){
+$('#new').hover(function(){
 	$("#descrip").text("I'd like a new recommendation.");
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
 });
 
-$(document).on('hover','#random',function(){
+$("#random").hover(function(){
 	$("#descrip").text("Generate a random course for me!");
 	$("#descrip").fadeIn(100);
 },function(){
 	$("#descrip").fadeOut(100);
 });
-
 
 
 $("#save").hover(function(){
