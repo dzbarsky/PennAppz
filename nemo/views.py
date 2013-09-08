@@ -20,9 +20,17 @@ def course_search(request):
     coursecode = request.POST['coursecode']
     db = DatabaseManager()
     courses = db.recommend_courses(coursecode)
-    print courses
     jsonified = json.dumps(courses, default=decimal_default)
     return HttpResponse(jsonified)
 
 def index(request):
     return render(request, 'nemo/index.html')
+
+def random_course(request):
+    if not request.is_ajax():
+	print 'not ajax'
+	return
+    db = DatabaseManager()
+    course = db.random_course()
+    jsonified = json.dumps(course, default=decimal_default)
+    return HttpResponse(jsonified) 
