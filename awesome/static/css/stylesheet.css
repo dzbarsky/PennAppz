@@ -97,8 +97,8 @@ chillest ACD0FD*/
 	position:absolute;
 	font-size:2em;
 	top:90px;
-	width:700px;
-	height:350px;
+	width:750px;
+	height:370px;
 	margin-left:50px; 
 	background-color:#E0EEEE;
 }
@@ -128,16 +128,35 @@ chillest ACD0FD*/
 #buttons{
 	position:relative;
 	height:50px;
-	top:445px;
-	margin-left:480px;
+	top:465px;
+	margin-left:530px;
 	padding:2px;
+}
+
+#check_fill{
+	position:absolute;
+	top:468px;
+	margin-left:538px;
+	width:40px;
+	height:40px;
+	border-radius:20px;
+	background-color:#90EE90;
+}
+#x_fill{
+	position:absolute;
+	top:470px;
+	margin-left:588px;
+	width:40px;
+	height:40px;
+	border-radius:20px;
+	background-color:#EE3B3B;
 }
 
 #descrip{
 	font-size:1em;
 	color:#666;
 	position:absolute;
-	top:460px;
+	top:480px;
 	margin-left:100px;
 	text-align:center;
 	padding:2px;

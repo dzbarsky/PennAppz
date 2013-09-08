@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-$(".response,#eval,#buttons,#load").hide();
+$(".response,#eval,#buttons,#load,#check_fill,#x_fill").hide();
 
 
 var allResponses = [];
