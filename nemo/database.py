@@ -1,10 +1,13 @@
 import sys
+from itertools import *
 
 import requests
 import simplejson as json
 import MySQLdb
-
 import os
+import math
+
+from nemo.models import Course, Instructor, Department, Links
 
 import pprint
 import nltk
@@ -16,17 +19,165 @@ class DatabaseManager:
         self.key = key
         self.db = MySQLdb.connect("localhost", "root", "", "PennApps" )
 
+    def recommend_courses(self, entered_string):
+        course = self.determine_searched_course(entered_string)
+        if course is None:
+	    print 'None'
+            return None
+	if not course['preSearched']:
+	    self.generate_course_links(course)
+	recommendations = self.query_to_dicts("""
+	SELECT c1.*, l1.strength
+	FROM nemo_course c1
+	JOIN nemo_links AS l1
+	ON l1.course1_id = c1.id
+	WHERE l1.course2_id = %s
+	UNION
+	SELECT c2.*, l2.strength
+	FROM nemo_course c2
+	JOIN nemo_links AS l2
+	ON l2.course2_id = c2.id
+	WHERE l2.course1_id = %s
+	ORDER BY strength DESC
+	""" % (course['id'], course['id']))
+	for rec in recommendations:
+	    print rec['title'] + ' ' + str(rec['strength'])
+
+    def find_relevant_courses(self, course):
+	
+	# Get relevant courses
+	dept_courses = self.query_to_dicts("""
+	SELECT c2.*, d.code 
+	FROM nemo_course c1, 
+	   nemo_course c2,
+	   nemo_course_departments cd1, 
+	   nemo_course_departments cd2, 
+	   nemo_department d 
+	WHERE c1.id = cd1.course_id 
+	AND cd1.department_id = cd2.department_id 
+	AND cd2.course_id = c2.id 
+	AND d.id = cd1.department_id 
+	AND cd1.course_id = %s
+	GROUP BY c2.id ;
+	""" % course['id'])
+
+	instructor_courses = self.query_to_dicts("""
+	SELECT c2.*, i.name 
+	FROM nemo_course c1, 
+	   nemo_course c2,
+	   nemo_instructor_courses ic1, 
+	   nemo_instructor_courses ic2, 
+	   nemo_instructor i 
+	WHERE c1.id = ic1.course_id 
+	AND ic1.instructor_id = ic2.instructor_id 
+	AND ic2.course_id = c2.id 
+	AND i.id = ic1.instructor_id 
+	AND ic1.course_id = %s
+	GROUP BY c2.id ;
+	""" % course['id'])
+
+	keyword_courses = self.query_to_dicts("""
+	SELECT c2.*, k.word
+	FROM nemo_course c1, 
+	   nemo_course c2,
+	   nemo_courses_keywords ck1, 
+	   nemo_courses_keywords ck2, 
+	   nemo_keyword k 
+	WHERE c1.id = ck1.course_id 
+	AND ck1.keyword_id = ck2.keyword_id 
+	AND ck2.course_id = c2.id 
+	AND k.id = ck1.keyword_id 
+	AND ck1.course_id = %s ;
+	""" % course['id'])
+
+	# Build data structure to hold courses
+	relevant_courses = dict()
+	for dept_course in dept_courses:
+	    if not dept_course['id'] in relevant_courses.keys():
+                dept_course['same_dept'] = 1
+		dept_course['same_instr'] = 0
+		dept_course['common_keywords'] = set()
+		relevant_courses[dept_course['id']] = dept_course
+	for instructor_course in instructor_courses:
+	    if not instructor_course['id'] in relevant_courses.keys():
+		instructor_course['same_dept'] = 0
+                instructor_course['same_instr'] = 1
+                instructor_course['common_keywords'] = set()
+		relevant_courses[instructor_course['id']] = instructor_course 
+	    else:
+		relevant_courses[instructor_course['id']]['same_instr'] = 1
+	for keyword_course in keyword_courses:
+	    if not keyword_course['id'] in relevant_courses:
+		keyword_course['same_dept'] = 0
+                keyword_course['same_instr'] = 0
+                keyword_course['common_keywords'] = set()
+		keyword_course['common_keywords'].add(keyword_course['word'])
+		relevant_courses[keyword_course['id']] = keyword_course
+	    else:
+		relevant_courses[keyword_course['id']]['common_keywords'].add(keyword_course['word'])
+
+	return relevant_courses
+
+    def get_course_links(self, course):
+	links1  = Links.objects.filter(course1_id__exact=course['id']).values()
+	links2  = Links.objects.filter(course2_id__exact=course['id']).values()
+	links = []
+	for link in links1:
+	    links.append(link['id'])
+	for link in links2:
+	    links.append(link['id'])
+	return links
+
+    def generate_course_links(self, entered_course):
+        courses = self.find_relevant_courses(entered_course)
+        my_course = courses[entered_course['id']]
+
+	linked_courses = self.get_course_links(my_course)
+	
+        # Calculate link weights
+        for course_id in courses:
+	    if course_id is my_course['id'] or course_id in linked_courses:
+	        pass
+            course = courses[course_id]
+	    link_strength = 0
+	    if course['same_dept']:
+		link_strength += 8
+	    if course['same_instr']:
+		if course['same_dept']:
+		    link_strength += 10
+		else:
+		    link_strength += 15
+	    link_strength += len(course['common_keywords']) * 4
+	    link_strength -= math.fabs(course['difficulty'] - my_course['difficulty']) * 2
+	    link_strength += float(course['courseQuality'])
+	    link_strength += float(course['instructorQuality'])
+	    course1 = min(course['id'], my_course['id']) 
+	    course2 = max(course['id'], my_course['id'])
+	    link = Links(course1_id=course1, course2_id=course2, strength=link_strength)
+	    link.save()
+
     def determine_searched_course(self,entered_string):
         matches = re.match(r'([a-zA-Z]{3,4})[-| ]?([0-9]{2,3})',entered_string);
         #strip punctuation from remaining string to get course number
         course_number = matches.group(1) + '-' + matches.group(2)
 
-        sql="""SELECT courses.*
-               FROM nemo_course courses, nemo_coursecodes cc
-               WHERE cc.code = '%s'
-               AND cc.course_id = courses.id""" % (course_number)
-        searched_course = self.executeQuery(sql)
-        return searched_course
+        searched_course = Course.objects.filter(coursecodes__code__exact=course_number)
+        if len(searched_course) is 0:
+            return None
+	return searched_course.values()[0]
+
+    def query_to_dicts(self, query_string, *query_args):
+	print query_string
+	cursor = self.db.cursor()
+	cursor.execute(query_string, query_args)
+	col_names = [desc[0] for desc in cursor.description]
+	while True:
+	    row = cursor.fetchone()
+	    if row is None:
+	        break
+	    row_dict = dict(izip(col_names, row))
+	    yield row_dict
+	return
 
     def executeQuery(self, sql):
         cursor = self.db.cursor()
