@@ -2,6 +2,7 @@ $(document).ready(function(){
 
 $(".response,#eval,#buttons,#load").hide();
 
+
 var allResponses = [];
 
 var current_code;
@@ -38,7 +39,6 @@ var processData = function() {
 	});
 	
 	$("#load").hide();
-	$("#load").destroy();
 	return false;
 };
 

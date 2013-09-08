@@ -73,7 +73,7 @@ chillest ACD0FD*/
 	top:100px;
 	font-size:1.4em;
 	margin-left:50px;
-	width:750px;
+	width:650px;
 	/*-webkit-appearance: none;*/
 }
 
@@ -86,26 +86,21 @@ chillest ACD0FD*/
 
 #load{
 	position:absolute;
-	top:200px;
-	margin-left:100px;
+	/*top:200px;
+	margin-left:100px;*/
+	top:0;
+	left:600px;
+	width:6%;
 }
 
 .response{
 	position:absolute;
 	font-size:2em;
-	/*visibility:hidden;*/
 	top:90px;
 	width:700px;
-	/*height:350px;*/
+	height:350px;
 	margin-left:50px; 
-	/*background-color:#E8E8E8;*/
 	background-color:#E0EEEE;
-	/*background-color: #C0E4FD;*/
-	/*text-align: center;*/
-	/*line-height:300px;*/
-	/*border-style:solid;
-	border-width:2px;
-	border-color:#000000;	*/
 }
 
 
@@ -133,8 +128,8 @@ chillest ACD0FD*/
 #buttons{
 	position:relative;
 	height:50px;
-	top:405px;
-	margin-left:400px;
+	top:445px;
+	margin-left:480px;
 	padding:2px;
 }
 
@@ -142,7 +137,7 @@ chillest ACD0FD*/
 	font-size:1em;
 	color:#666;
 	position:absolute;
-	top:420px;
+	top:460px;
 	margin-left:100px;
 	text-align:center;
 	padding:2px;
