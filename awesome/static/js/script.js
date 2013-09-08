@@ -50,7 +50,7 @@ var processData = function() {
 
 var updateCourse = function(course) {
     if (course) {
-        current_code = course["coursecodes"][0];
+        var current_code = course["coursecodes"][0];
         currentCourseTitle = course["title"];
         courseHtml.empty();
         $('#this_course').text(course['id']);
@@ -58,7 +58,11 @@ var updateCourse = function(course) {
         $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
         $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
 
-        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
+        if (course["courseQuality"] != -1 &&
+            course["instructorQuality"] != -1 &&
+            course["difficulty"] != -1) {
+            $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
+        }
     } else {
             courseHtml.empty();
             $(document.createElement('div')).attr('id','title').text("Sorry, we could not find this course in our database.  Our database is still expanding.  This is a work in progress!").appendTo(courseHtml);
