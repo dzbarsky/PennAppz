@@ -29,7 +29,6 @@ class DatabaseManager:
     def thumbs_up(self,curr_course,sugg_course):
         course1 = min(curr_course.id,sugg_course.id)
         course2 = max(curr_course.id,sugg_course.id)
-
         sql = """UPDATE nemo_links
         SET strength = strength + 1
         WHERE course1_id = '%s' 

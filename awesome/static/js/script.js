@@ -40,6 +40,7 @@ var processData = function() {
 var updateCourse = function(course) {
     var current_code = course["coursecodes"];
     courseHtml.empty();
+	$('#this_course').text(course['id']);
         $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
         $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
         $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
@@ -81,12 +82,8 @@ $("#new").click(function(){
 
 $("#random").click(function(){
 	$.post('random_course/',function(response) {
-		$(".response").flippy({
-			verso:response,
-			duration:"500",
-			color_target: "#E0EEEE"
-		});
-		alert('hey');
+		console.log($.parseJSON(response)[0]);
+		updateCourse($.parseJSON(response)[0]);
 	});
 	return false;
 });
@@ -142,7 +139,7 @@ $(document).on('click',"#check",function() {
 		  feedback: 'thumbs_up' });
 });
 
-$(document).on('click',"#x",function() {
+$(document).on('click',"#X",function() {
 	$.post('user_feedback/',
 		{ searched_course: $('input[name=keyword]').val(),
 		  courseid2: $('#this_course').text(),
