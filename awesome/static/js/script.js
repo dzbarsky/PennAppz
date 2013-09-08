@@ -33,7 +33,8 @@ var processData = function() {
 		//color_target:'#CAEEFD',
 		onFinish: function(){
 	        // $('#course').append(course[field] + '<br>');
-	        $(document.createElement('div')).attr('id','title').text(course["coursecodes"]+" | "+course["title"]).appendTo(courseHtml);
+	        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
+	        $(document.createElement('div')).attr('id','codes').text(course[coursecodes]).appendTo(courseHtml);
 	        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
 	        
 	        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
