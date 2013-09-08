@@ -4,6 +4,8 @@ $(".response,#eval,#buttons").hide();
 
 var allResponses = [];
 
+var current_code;
+
 //WHEN USER HITS SUBMIT
 $("#searchbar").submit(function(){
 
@@ -18,6 +20,7 @@ $("#searchbar").submit(function(){
 var processData = function() {
   var course = allResponses.shift(),
       courseHtml = $('<div id="course"></div>');
+      current_code = course["coursecodes"];
 
 	$('#searchbar').animate({
 	     top: '20px',
@@ -30,15 +33,13 @@ var processData = function() {
 		//color_target:'#CAEEFD',
 		onFinish: function(){
 	        // $('#course').append(course[field] + '<br>');
-	        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
+	        $(document.createElement('div')).attr('id','title').text(course["coursecodes"]+" | "+course["title"]).appendTo(courseHtml);
 	        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
 	        
-	        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
-	        $(document.createElement('div')).attr('id','cqual').text("Course Quality: "+course["courseQuality"]).appendTo("#ratings");
-	        $(document.createElement('div')).attr('id','iqual').text("Instructor Quality: "+course["instructorQuality"]).appendTo("#ratings");
-	        $("#ratings").appendTo(courseHtml);
-	        
-	      
+	        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
+	        // $(document.createElement('div')).attr('id','cqual').text("Course Quality: "+course["courseQuality"]).appendTo("#ratings");
+	        // $(document.createElement('div')).attr('id','iqual').text("Instructor Quality: "+course["instructorQuality"]).appendTo("#ratings");
+	        // $("#ratings").appendTo(courseHtml);
 		}
 	});
 	
@@ -83,7 +84,7 @@ $("#random").click(function(){
 });
 
 $("#save").click(function(){
-	$(document.createElement('div')).attr('id', 's1').attr('style','cursor:pointer').height('40px').width($("#sidebar").width()).text($("#code").text()).css({ 'font-size':'0.8em','background-color': '#E0EEEE', padding:'8px', position: 'relative', left: 0, top: 0, margin: "5px", textAlign: "left", 'line-height':'40px', color: "#000", 'border-radius':'10px' }).prependTo($('#sidebar')).hide();
+	$(document.createElement('div')).attr('id', 's1').attr('style','cursor:pointer').height('40px').width($("#sidebar").width()).text(current_code).css({ 'font-size':'0.8em','background-color': '#E0EEEE', padding:'8px', position: 'relative', left: 0, top: 0, margin: "5px", textAlign: "left", 'line-height':'40px', color: "#000", 'border-radius':'10px' }).prependTo($('#sidebar')).hide();
 	$(document.createElement('div')).attr('class','close').text('x').css({position:'absolute',right:10, 'text-align':'right', 'line-height':'40px', width:'20px',height:'40px',color:'#fff'}).prependTo($('#s1'));
 	$("#s1").slideDown();
 });
