@@ -20,6 +20,7 @@ def course_search(request):
     coursecode = request.POST['coursecode']
     db = DatabaseManager()
     courses = db.recommend_courses(coursecode)
+    print courses
     jsonified = json.dumps(courses, default=decimal_default)
     return HttpResponse(jsonified)
 

@@ -40,8 +40,10 @@ class DatabaseManager:
 	WHERE l2.course1_id = %s
 	ORDER BY strength DESC
 	""" % (course['id'], course['id']))
+	recs = []
 	for rec in recommendations:
-	    print rec['title'] + ' ' + str(rec['strength'])
+	    recs.append(rec)
+	return recs
 
     def find_relevant_courses(self, course):
 	
@@ -167,7 +169,6 @@ class DatabaseManager:
 	return searched_course.values()[0]
 
     def query_to_dicts(self, query_string, *query_args):
-	print query_string
 	cursor = self.db.cursor()
 	cursor.execute(query_string, query_args)
 	col_names = [desc[0] for desc in cursor.description]
