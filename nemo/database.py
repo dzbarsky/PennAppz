@@ -217,9 +217,9 @@ class DatabaseManager:
 		link_strength += 8
 	    if course['same_instr']:
 		if course['same_dept']:
-		    link_strength += 10
+		    link_strength += 0
 		else:
-		    link_strength += 15
+		    link_strength += 5
 	    link_strength += len(course['common_keywords']) * 4
 	    link_strength -= math.fabs(course['difficulty'] - my_course['difficulty']) * 2
 	    link_strength += float(course['courseQuality'])
