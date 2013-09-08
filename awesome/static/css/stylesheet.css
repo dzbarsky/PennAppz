@@ -55,8 +55,8 @@ chillest ACD0FD*/
 #subheader{
 	font-size:1em;
 	position:absolute;
-	top:70px;
-	left:230px;
+	top:76px;
+	left:220px;
 	color:#666;
 	/*color:#5c80cb;*/
 }
@@ -69,9 +69,9 @@ chillest ACD0FD*/
 }
 
 #searchbar{
-	text-align: center;
+	text-align: bottom;
 	top:100px;
-	font-size:2em;
+	font-size:1.4em;
 	margin-left:100px;
 	width:750px;
 	/*-webkit-appearance: none;*/
@@ -80,7 +80,7 @@ chillest ACD0FD*/
 #textbox{
 	font-family:'Quattrocento Sans', sans-serif, bold;
 	font-size:20px;
-	width:200px;
+	width:270px;
 	height:25px;
 }
 
@@ -118,9 +118,6 @@ chillest ACD0FD*/
 #c_descrip{
 	font-size:0.5em;
 }
-#ratings{
-	font-size:0.5em;
-}
 
 /*#eval{
 	top:405px;
@@ -151,16 +148,16 @@ chillest ACD0FD*/
 }
 
 #submit{
-	border-radius:18px;
-	background-color:#ACD0FD;
-	color:#000;
-	font-size:0.6em;
+	border-radius:20px;
+	background-color:#5c80cb;
+	color:#fff;
+	font-size:0.9em;
 	border-color:#fff;
 	border-style:none;
 	text-align:center;
-	line-height: 33px;
-	width:36px;
-	height:36px;
+	line-height:30px;
+	width:40px;
+	height:40px;
 }
 
 #sidebar{
