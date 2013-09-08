@@ -72,7 +72,7 @@ chillest ACD0FD*/
 	text-align: bottom;
 	top:100px;
 	font-size:1.4em;
-	margin-left:100px;
+	margin-left:50px;
 	width:750px;
 	/*-webkit-appearance: none;*/
 }
@@ -89,9 +89,9 @@ chillest ACD0FD*/
 	font-size:2em;
 	/*visibility:hidden;*/
 	top:90px;
-	width:800px;
+	width:700px;
 	height:300px;
-	margin-left:100px; 
+	margin-left:50px; 
 	/*background-color:#E8E8E8;*/
 	background-color:#E0EEEE;
 	/*background-color: #C0E4FD;*/
@@ -137,7 +137,7 @@ chillest ACD0FD*/
 	position:absolute;
 	height:50px;
 	top:405px;
-	margin-left:525px;
+	margin-left:475px;
 }
 
 
@@ -147,7 +147,7 @@ chillest ACD0FD*/
 	color:#666;
 	position:absolute;
 	top:420px;
-	margin-left:200px;
+	margin-left:150px;
 	text-align:center;
 }
 
