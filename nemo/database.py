@@ -76,8 +76,8 @@ class DatabaseManager:
         if not course.preSearched:
             self.generate_course_links(course)
             sql="""
-#UPDATE nemo_course SET preSearched=True
-#WHERE course_id=%s""" % course.id
+UPDATE nemo_course SET preSearched=True
+WHERE id=%s""" % course.id
             self.executeQuery(sql)
 
 	recommendations = self.query_to_dicts("""
