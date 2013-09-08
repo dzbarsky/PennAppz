@@ -17,10 +17,10 @@ $("#searchbar").submit(function(){
   return false;
 });
 
+var courseHtml = $('<div id="course"></div>');
+
 var processData = function() {
   var course = allResponses.shift();
-  var courseHtml = $('<div id="course"></div>');
-  var current_code = course["coursecodes"];
 
 	$('#searchbar').animate({
 	     top: '20px',
@@ -31,19 +31,23 @@ var processData = function() {
 		duration:"500",
 		color_target: "#E0EEEE",
 		//color_target:'#CAEEFD',
-		onFinish: function(){
-	        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
-	        $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
-	        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
-	        
-	        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
-		}
+		onFinish: updateCourse(course)
 	});
 	
 	return false;
 };
 
-$("#submit").mousedown(function(){
+var updateCourse = function(course) {
+    var current_code = course["coursecodes"];
+    courseHtml.empty();
+        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
+        $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
+        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
+
+        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]+" | "+"Course Quality: "+course["courseQuality"]+" | "+"Instructor Quality: "+course["instructorQuality"]).appendTo($(document.createElement('div')).attr('id','ratings').appendTo(courseHtml));
+}
+
+	$("#submit").mousedown(function(){
 	$(this).css('background-color','#ACD0FD');
 });
 $("#submit").mouseup(function(){
@@ -64,9 +68,13 @@ $(".icon").mouseup(function(){
 
 $("#new").click(function(){
 	$(".response").flippy({
-		verso:"something new",
+		verso:courseHtml,
 		duration:"500",
-		color_target: "#E0EEEE"
+		color_target: "#E0EEEE",
+    onStart: function() {
+        var course = allResponses.shift();
+        updateCourse(course);
+    }
 	});
 	return false;
 });
