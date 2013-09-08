@@ -30,12 +30,11 @@ var processData = function() {
 		color_target: "#E0EEEE",
 		//color_target:'#CAEEFD',
 		onFinish: function(){
-	      for (var field in course) {
 	        // $('#course').append(course[field] + '<br>');
 	        $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
 	        $(document.createElement('div')).attr('id','c_descrip').text(course["description"]).appendTo(courseHtml);
 	        $(document.createElement('div')).attr('id','ratings').text(course["difficulty"],course["instructorQuality"],course["courseQuality"]).appendTo(courseHtml);
-	      }
+	      
 		}
 	});
 	
