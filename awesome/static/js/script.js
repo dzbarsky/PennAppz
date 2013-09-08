@@ -98,8 +98,13 @@ $("#new").click(function(){
 
 $("#random").click(function(){
 	$.post('random_course/',function(response) {
-		console.log($.parseJSON(response)[0]);
-		updateCourse($.parseJSON(response)[0]);
+		$(".response").flippy({
+			verso: courseHtml,
+			duration:"500",
+			color_target: "#E0EEEE",
+			//color_target:'#CAEEFD',
+			onFinish: updateCourse($.parseJSON(response)[0]),
+		});
 	});
 	return false;
 });
