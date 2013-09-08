@@ -36,6 +36,7 @@ var processData = function() {
 	        $(document.createElement('div')).attr('id','diff').text("Difficulty: "+course["difficulty"]).appendTo("#ratings");
 	        $(document.createElement('div')).attr('id','cqual').text("Course Quality: "+course["courseQuality"]).appendTo("#ratings");
 	        $(document.createElement('div')).attr('id','iqual').text("Instructor Quality: "+course["instructorQuality"]).appendTo("#ratings");
+	        $("#course").append("#ratings");
 	        
 	      
 		}
