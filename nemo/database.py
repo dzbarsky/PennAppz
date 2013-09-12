@@ -114,7 +114,7 @@ WHERE id=%s""" % course.id
 	for rec in recs.iteritems():
 	    recsArray.append(rec[1])
 	recsArray.sort(key=lambda c: c['strength'], reverse=True)
-	return recsArray[1:]
+	return recsArray
 
     def find_relevant_courses(self, course):
 	
@@ -235,7 +235,9 @@ WHERE id=%s""" % course.id
         if matches is None:
             return None
 
-        course_number = matches.group(1) + '-' + matches.group(2)
+	code = 'CSE' if matches.group(1).lower() == 'cis' and int(matches.group(2)) < 500 else matches.group(1)
+	print code
+        course_number = code + '-' + matches.group(2)
 
         searched_course = Course.objects.filter(coursecodes__code__exact=course_number)
         if len(searched_course) is 0:

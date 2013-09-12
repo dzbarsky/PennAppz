@@ -85,18 +85,16 @@ chillest ACD0FD*/
 }
 
 #load{
-	position:absolute;
 	/*top:200px;
 	margin-left:100px;*/
-	top:0;
 	left:600px;
-	width:6%;
+	width:4%;
 }
 
 .response{
 	position:absolute;
 	font-size:2em;
-	top:90px;
+	top:97px;
 	width:750px;
 	height:370px;
 	margin-left:50px; 
@@ -184,3 +182,17 @@ chillest ACD0FD*/
 	margin-left:860px;
 }
 
+#course{
+	padding:9px;
+}
+
+#viewing,#viewing-random{
+	font-size:14px;
+	padding:4px;
+	background-color:#E0EEEE;
+	width:741px;
+}
+
+#viewing-container{
+	padding-bottom:7px;
+}

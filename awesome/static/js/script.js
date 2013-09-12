@@ -30,6 +30,11 @@ var courseHtml = $('<div id="course"></div>');
 var currentCourseTitle;
 
 var processData = function() {
+  console.log(allResponses);
+  var this_course = allResponses ? allResponses.shift() : null;
+  $('#this_course').text(this_course['id']);
+  $('#viewing-random').hide();
+  $('#course_title').text(this_course['title']).closest('#viewing').show();
   var course = allResponses ? allResponses.shift() : null;
       
 	$('#searchbar').animate({
@@ -55,13 +60,12 @@ var updateCourse = function(course) {
         current_code = course["coursecodes"][0];
         currentCourseTitle = course["title"];
         courseHtml.empty();
-        $('#this_course').text(course['id']);
         $(document.createElement('div')).attr('id','title').text(course["title"]).appendTo(courseHtml);
         $(document.createElement('div')).attr('id','codes').text(course["coursecodes"].join(", ")).appendTo(courseHtml);
         var d = course["description"];
         var len = d.toString().length;
         if (len>1300) {
-        	a = d.substr(0, 1300) + '...';
+        	a = d.substr(0, 1100) + '...';
         }
         else {a=d;}
         $(document.createElement('div')).attr('id','c_descrip').text(a).appendTo(courseHtml);
@@ -116,6 +120,8 @@ $(document).on('click','#new',function(){
 
 $(document).on('click','#random',function(){
 	$('input[name=keyword]').val('');
+	$('#viewing').hide();
+	$('#viewing-random').show();
 	$('#check,#X,#new').fadeTo('slow',0.1,function() {
 		var cl = $(this).attr('class') + '-disabled';
 		$(this).removeAttr('class').attr('class',cl);

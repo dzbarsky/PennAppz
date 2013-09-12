@@ -18,12 +18,6 @@
     <!--header font-->
     <link href='http://fonts.googleapis.com/css?family=Yeseva+One|Happy+Monkey|Quattrocento+Sans' rel='stylesheet' type='text/css'>
 
-    <script>
-    $(document).on('click','button',function() {
-      $.post('course_search/',{coursecode:'SARS 105'});
-    });
-    </script>
-  
   </head>
   <!-- <body bgcolor='#B0E2FF'> -->
   <body>
@@ -35,8 +29,18 @@
     <div id="subheader">a discovery engine</div>
     <div id="main">
       <div id='this_course' style='display:none'></div>
-      <form id="searchbar"> enter a course you enjoyed:
-        <input id="textbox" type="text" name="keyword" placeholder="e.g. PSYC 001">
+      <form id="searchbar"> 
+      <div id='viewing-container'>
+      <div id='viewing' style='display:none;'>
+      Currently viewing recommendations for <span id=course_title></span>
+      </div>
+      <div id='viewing-random' style='display:none;'>
+      Currently viewing random courses
+      </div>
+      </div>
+
+	enter a course you enjoyed:&nbsp&nbsp&nbsp
+        <input id="textbox" type="text" name="keyword" placeholder=" e.g. PSYC 001">
         <input style="cursor:pointer" type="submit" value="go" id="submit">
         <img id="load" src="static/images/ajax-loader.gif"></img>
       </form>
